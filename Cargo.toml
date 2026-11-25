@@ -1,5 +1,5 @@
 [package]
-name = "moviebox-tui"
+name = "nexflex"
 exclude = [
     "docs/",
     "Formula/",
@@ -20,7 +20,7 @@ description = "Terminal interface to find, download, and stream movies, TV shows
 repository = "https://github.com/mesamirh/MovieBox-Tui"
 homepage = "https://github.com/mesamirh/MovieBox-Tui"
 license = "MIT OR Apache-2.0"
-keywords = ["tui", "moviebox", "streaming", "movies", "cli"]
+keywords = ["tui", "nexflex", "streaming", "movies", "cli"]
 categories = ["command-line-utilities", "multimedia"]
 readme = "README.md"
 rust-version = "1.90.0"
@@ -62,7 +62,7 @@ zip = { version = "9.0.5", default-features = false, features = ["deflate"] }
 tempfile = "3.17.1"
 
 [lib]
-name = "moviebox_tui"
+name = "nexflex"
 path = "src/lib.rs"
 
 [lints.clippy]

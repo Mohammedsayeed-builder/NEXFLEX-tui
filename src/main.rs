@@ -1,4 +1,4 @@
-use moviebox_tui::tui::app::App;
+use nexflex::tui::app::App;
 
 #[cfg(not(target_os = "android"))]
 #[global_allocator]
@@ -7,7 +7,7 @@ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 struct TerminalGuard;
 
 fn restore_terminal() {
-    if !moviebox_tui::config::is_termux_environment() {
+    if !nexflex::config::is_termux_environment() {
         let _ = crossterm::execute!(
             std::io::stdout(),
             crossterm::event::PopKeyboardEnhancementFlags
@@ -28,8 +28,8 @@ fn purge_stale_subtitles() {
     tokio::task::spawn_blocking(|| {
         let max_age = 24 * 60 * 60;
         let dirs = [
-            moviebox_tui::config::cache_dir().join("subs"),
-            std::env::temp_dir().join("moviebox-tui").join("subs"),
+            nexflex::config::cache_dir().join("subs"),
+            std::env::temp_dir().join("nexflex").join("subs"),
         ];
 
         for dir in dirs {
@@ -53,7 +53,7 @@ fn purge_stale_subtitles() {
 fn purge_stale_update_artifacts() {
     tokio::task::spawn_blocking(|| {
         if let Ok(current_exe) = std::env::current_exe() {
-            moviebox_tui::updater::apply::cleanup_stale_update_artifacts(&current_exe);
+            nexflex::updater::apply::cleanup_stale_update_artifacts(&current_exe);
         }
     });
 }
@@ -80,46 +80,46 @@ async fn main() -> std::io::Result<()> {
             .filter(|&h| h > 0);
         let headers: Vec<(String, String)> =
             serde_json::from_str(&headers_json).unwrap_or_default();
-        moviebox_tui::proxy::run_sidecar(target_url, headers, sub_url, max_height).await;
+        nexflex::proxy::run_sidecar(target_url, headers, sub_url, max_height).await;
         return Ok(());
     }
     if args.iter().any(|arg| arg == "--help" || arg == "-h") {
-        println!("moviebox-tui {}", env!("CARGO_PKG_VERSION"));
+        println!("nexflex {}", env!("CARGO_PKG_VERSION"));
         println!("A terminal client for finding and streaming movies, TV shows, and anime.\n");
         println!("USAGE:");
-        println!("    moviebox-tui [OPTIONS]\n");
+        println!("    nexflex [OPTIONS]\n");
         println!("OPTIONS:");
         println!("    -h, --help           Print help information");
         println!("    -v, -V, --version    Print version information\n");
         println!("ENVIRONMENT VARIABLES:");
-        println!("    MOVIEBOX_LOG            Log level (off, error, warn, info, debug, trace)");
-        println!("    MOVIEBOX_THEME          Theme name (e.g. catppuccin, dracula, nord, etc.)");
-        println!("    MOVIEBOX_PLAYER         Preferred player (mpv, iina, vlc, android)");
-        println!("    MOVIEBOX_MPV_PATH       Custom mpv binary path");
-        println!("    MOVIEBOX_VLC_PATH       Custom vlc binary path");
-        println!("    MOVIEBOX_IINA_PATH      Custom iina-cli binary path");
-        println!("    MOVIEBOX_FOURKHDHUB_URL Custom 4KHDHub base URL");
-        println!("    MOVIEBOX_NO_IMAGE       Disable poster image queries (1/true)");
+        println!("    NEXFLEX_LOG            Log level (off, error, warn, info, debug, trace)");
+        println!("    NEXFLEX_THEME          Theme name (e.g. catppuccin, dracula, nord, etc.)");
+        println!("    NEXFLEX_PLAYER         Preferred player (mpv, iina, vlc, android)");
+        println!("    NEXFLEX_MPV_PATH       Custom mpv binary path");
+        println!("    NEXFLEX_VLC_PATH       Custom vlc binary path");
+        println!("    NEXFLEX_IINA_PATH      Custom iina-cli binary path");
+        println!("    NEXFLEX_FOURKHDHUB_URL Custom 4KHDHub base URL");
+        println!("    NEXFLEX_NO_IMAGE       Disable poster image queries (1/true)");
         println!(
-            "    MOVIEBOX_IMAGE_PROTOCOL Force graphics protocol (kitty, sixel, iterm2, none)"
+            "    NEXFLEX_IMAGE_PROTOCOL Force graphics protocol (kitty, sixel, iterm2, none)"
         );
-        println!("    MOVIEBOX_CELL_SIZE      Override terminal cell size as WxH (e.g. 10x20)");
+        println!("    NEXFLEX_CELL_SIZE      Override terminal cell size as WxH (e.g. 10x20)");
         return Ok(());
     }
     if args
         .iter()
         .any(|arg| arg == "--version" || arg == "-v" || arg == "-V")
     {
-        println!("moviebox-tui {}", env!("CARGO_PKG_VERSION"));
+        println!("nexflex {}", env!("CARGO_PKG_VERSION"));
         return Ok(());
     }
 
-    moviebox_tui::logging::init();
+    nexflex::logging::init();
 
     std::panic::set_hook(Box::new(|info| {
         let backtrace = std::backtrace::Backtrace::capture();
         log::error!("panic: {info}\nbacktrace:\n{backtrace}");
-        moviebox_tui::logging::flush();
+        nexflex::logging::flush();
         restore_terminal();
         eprintln!("{info}\n{backtrace}");
     }));
@@ -137,7 +137,7 @@ async fn main() -> std::io::Result<()> {
         crossterm::event::EnableMouseCapture,
         crossterm::event::EnableFocusChange
     )?;
-    if !moviebox_tui::config::is_termux_environment() {
+    if !nexflex::config::is_termux_environment() {
         let _ = crossterm::execute!(
             std::io::stdout(),
             crossterm::event::PushKeyboardEnhancementFlags(
@@ -147,7 +147,7 @@ async fn main() -> std::io::Result<()> {
         );
     }
 
-    moviebox_tui::cache::clean_old_cache_background();
+    nexflex::cache::clean_old_cache_background();
     purge_stale_subtitles();
     purge_stale_update_artifacts();
 

@@ -1,19 +1,19 @@
 <div align="center">
 
-# MovieBox-TUI
+# NEXFLEX
 
 **Terminal interface to find, download, and stream movies, TV shows, and live TV using local media players.**
 
 [ English ](README.md) • [ বাংলা ](README_BN.md) • [ हिन्दी ](README_HI.md) • [ Español ](README_ES.md)
 
 [![CI](https://img.shields.io/github/actions/workflow/status/mesamirh/MovieBox-Tui/ci.yml?branch=main&label=CI&logo=github&style=flat)](https://github.com/mesamirh/MovieBox-Tui/actions/workflows/ci.yml)
-[![crates.io](https://img.shields.io/crates/v/moviebox-tui.svg?logo=rust&style=flat)](https://crates.io/crates/moviebox-tui)
+[![crates.io](https://img.shields.io/crates/v/nexflex.svg?logo=rust&style=flat)](https://crates.io/crates/nexflex)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg?style=flat)](#license)
 [![Telegram](https://img.shields.io/badge/Telegram-Channel-2CA5E0?style=flat&logo=telegram&logoColor=white)](https://t.me/getfromme)
 [![Support](https://img.shields.io/badge/Support-Crypto-F7931A?style=flat&logo=bitcoin&logoColor=white)](#optional-support)
 </div>
 
-[moviebox-tui-walkthrough.webm](https://github.com/user-attachments/assets/7554a7e5-6ff5-49ec-9d87-f821ea99950e)
+[nexflex-walkthrough.webm](https://github.com/user-attachments/assets/7554a7e5-6ff5-49ec-9d87-f821ea99950e)
 
 ## Features
 
@@ -40,7 +40,7 @@
 If you have [Homebrew](https://brew.sh/) on macOS:
 ```bash
 brew tap mesamirh/moviebox-tui https://github.com/mesamirh/MovieBox-Tui
-brew install moviebox-tui
+brew install nexflex
 ```
 
 > **Note:** If Homebrew prompts for tap verification on initial install, run `brew trust mesamirh/moviebox-tui`.
@@ -55,7 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.
 If you have [Scoop](https://scoop.sh/) (recommended):
 ```powershell
 scoop bucket add moviebox https://github.com/mesamirh/MovieBox-Tui
-scoop install moviebox-tui
+scoop install nexflex
 ```
 
 Direct install via PowerShell (no package manager needed):
@@ -76,13 +76,13 @@ termux-setup-storage
 <summary><b>Cargo & Source Build</b></summary>
 
 ```bash
-cargo install moviebox-tui --locked
+cargo install nexflex --locked
 ```
 
 From source:
 ```bash
 git clone https://github.com/mesamirh/MovieBox-Tui.git
-cd MovieBox-Tui
+cd NEXFLEX
 cargo build --release --locked
 ```
 
@@ -105,9 +105,9 @@ Re-run install command (`curl ... | bash` or `irm ... | iex`) and select `2) Uni
 
 Or via package manager:
 ```bash
-brew uninstall moviebox-tui     # Homebrew
-scoop uninstall moviebox-tui    # Scoop
-cargo uninstall moviebox-tui    # Cargo
+brew uninstall nexflex     # Homebrew
+scoop uninstall nexflex    # Scoop
+cargo uninstall nexflex    # Cargo
 ```
 
 </details>
@@ -115,7 +115,7 @@ cargo uninstall moviebox-tui    # Cargo
 ## Quick Start
 
 ```bash
-moviebox-tui
+nexflex
 ```
 
 - Type to search, press `Enter` to play.
@@ -162,4 +162,4 @@ Dual-licensed under [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE).
 
 ## Disclaimer
 
-MovieBox-TUI does not host or store media. It plays publicly available streams. Users must comply with local laws.
+NEXFLEX does not host or store media. It plays publicly available streams. Users must comply with local laws.

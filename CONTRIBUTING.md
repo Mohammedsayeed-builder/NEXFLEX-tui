@@ -1,4 +1,4 @@
-# Contributing to MovieBox-Tui
+# Contributing to NEXFLEX
 
 Thanks for taking the time to contribute. Bug reports, ideas, docs improvements, and pull requests are all welcome.
 
@@ -10,8 +10,8 @@ You'll need Rust **1.90 or newer** (edition 2024). Install it via [rustup.rs](ht
 
 ```bash
 # Fork on GitHub, then clone your fork
-git clone https://github.com/<your-username>/MovieBox-Tui.git
-cd MovieBox-Tui
+git clone https://github.com/<your-username>/NEXFLEX.git
+cd NEXFLEX
 
 # Add the upstream remote to keep in sync
 git remote add upstream https://github.com/mesamirh/MovieBox-Tui.git

@@ -1,8 +1,8 @@
-use moviebox_tui::history::{HistoryManager, PendingPlaybackState, WatchHistoryItem};
-use moviebox_tui::providers::models::ProviderKind;
-use moviebox_tui::tui::action::Action;
-use moviebox_tui::tui::app::App;
-use moviebox_tui::tui::state::Screen;
+use nexflex::history::{HistoryManager, PendingPlaybackState, WatchHistoryItem};
+use nexflex::providers::models::ProviderKind;
+use nexflex::tui::action::Action;
+use nexflex::tui::app::App;
+use nexflex::tui::state::Screen;
 
 #[allow(clippy::too_many_arguments)]
 fn dummy_history_item(

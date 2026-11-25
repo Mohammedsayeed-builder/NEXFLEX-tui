@@ -1,6 +1,6 @@
 # Configuration
 
-MovieBox-TUI stores its settings in `config.json` inside your platform configuration directory.
+NEXFLEX stores its settings in `config.json` inside your platform configuration directory.
 
 ## Interactive Settings Hub (`/settings`)
 
@@ -13,8 +13,8 @@ Enter `/settings` in the search bar or click `[ ⚙ Settings ]` on the Home scre
 
 ## Configuration File Paths
 
-- **Linux / macOS / Termux**: `~/.config/moviebox-tui/config.json`
-- **Windows**: `%APPDATA%\MovieBox-Tui\config.json`
+- **Linux / macOS / Termux**: `~/.config/nexflex/config.json`
+- **Windows**: `%APPDATA%\NEXFLEX\config.json`
 
 ## Configuration Options (`config.json`)
 
@@ -22,7 +22,7 @@ Enter `/settings` in the search bar or click `[ ⚙ Settings ]` on the Home scre
 | :--- | :--- | :--- | :--- |
 | `auto_update` | `bool` | `true` | Check for application updates on launch |
 | `default_player` | `string` | `"mpv"` | Default player (`"mpv"`, `"vlc"`, `"iina"`, `"android"`) |
-| `download_dir` | `string?` | `None` | Custom download directory (defaults to `~/Downloads/MovieBox-TUI`) |
+| `download_dir` | `string?` | `None` | Custom download directory (defaults to `~/Downloads/NEXFLEX`) |
 | `streaming_enabled` | `bool` | `true` | Enable on-demand streaming |
 | `tv_enabled` | `bool` | `true` | Enable live TV mode |
 | `addons_enabled` | `bool` | `false` | Enable Stremio Addons provider |
@@ -40,16 +40,16 @@ Enter `/settings` in the search bar or click `[ ⚙ Settings ]` on the Home scre
 
 | Variable | Description |
 | :--- | :--- |
-| `MOVIEBOX_PLAYER` | Force media player (`"mpv"`, `"vlc"`, `"iina"`, `"android"`) |
-| `MOVIEBOX_MPV_PATH` | Custom executable path for `mpv` |
-| `MOVIEBOX_VLC_PATH` | Custom executable path for `VLC` |
-| `MOVIEBOX_IINA_PATH` | Custom executable path for `IINA` (macOS) |
-| `MOVIEBOX_CONFIG_DIR` | Custom directory for `config.json` |
-| `MOVIEBOX_DATA_DIR` | Custom directory for watch history and favorites |
-| `MOVIEBOX_CACHE_DIR` | Custom directory for disk cache |
-| `MOVIEBOX_THEME` | Override active theme on launch (e.g. `"TokyoNight"`, `"Dracula"`) |
-| `MOVIEBOX_LOG` | Logging level (`"error"`, `"warn"`, `"info"`, `"debug"`, `"trace"`) |
-| `MOVIEBOX_NO_IMAGE` | Set to `"1"` or `"true"` to disable terminal image previews |
-| `MOVIEBOX_IMAGE_PROTOCOL` | Force image protocol (`"kitty"`, `"sixel"`, `"iterm2"`, or `"off"`) |
-| `MOVIEBOX_CELL_SIZE` | Override font cell size for image scaling (e.g. `"10x20"`) |
+| `NEXFLEX_PLAYER` | Force media player (`"mpv"`, `"vlc"`, `"iina"`, `"android"`) |
+| `NEXFLEX_MPV_PATH` | Custom executable path for `mpv` |
+| `NEXFLEX_VLC_PATH` | Custom executable path for `VLC` |
+| `NEXFLEX_IINA_PATH` | Custom executable path for `IINA` (macOS) |
+| `NEXFLEX_CONFIG_DIR` | Custom directory for `config.json` |
+| `NEXFLEX_DATA_DIR` | Custom directory for watch history and favorites |
+| `NEXFLEX_CACHE_DIR` | Custom directory for disk cache |
+| `NEXFLEX_THEME` | Override active theme on launch (e.g. `"TokyoNight"`, `"Dracula"`) |
+| `NEXFLEX_LOG` | Logging level (`"error"`, `"warn"`, `"info"`, `"debug"`, `"trace"`) |
+| `NEXFLEX_NO_IMAGE` | Set to `"1"` or `"true"` to disable terminal image previews |
+| `NEXFLEX_IMAGE_PROTOCOL` | Force image protocol (`"kitty"`, `"sixel"`, `"iterm2"`, or `"off"`) |
+| `NEXFLEX_CELL_SIZE` | Override font cell size for image scaling (e.g. `"10x20"`) |
 | `NO_COLOR` | Force high-contrast monochrome mode |

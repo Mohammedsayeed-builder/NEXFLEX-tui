@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased] - NEXFLEX
+
+### Changed
+- **Project rename**: the app is now **NEXFLEX**. Crate, library and binary are `nexflex`, the
+  version/usage output, installer banners, Homebrew formula (`Formula/nexflex.rb`), Scoop
+  manifest (`bucket/nexflex.json`), CI workflows and docs follow the new name. The `MovieBox`
+  content provider keeps its name (`ProviderKind::MovieBox`, `src/providers/moviebox/`).
+- **Environment variables**: `NEXFLEX_CONFIG_DIR`, `NEXFLEX_DATA_DIR`, `NEXFLEX_CACHE_DIR`,
+  `NEXFLEX_LOG`, `NEXFLEX_THEME` and friends replace the `MOVIEBOX_*` names. The old names are
+  still read as a fallback, so existing shell profiles keep working.
+- **Data migration**: on first run the config, data and cache directories
+  (`~/.config/moviebox-tui`, `~/.local/share/moviebox-tui`, `~/.cache/moviebox-tui`) are moved to
+  their `nexflex` equivalents, so history, favourites, addons and settings are preserved.
+- **Wordmark**: the landing-screen logo is now the NEXFLEX wordmark, with a plain-text fallback
+  for basic terminals.
+
 ## [0.1.30] - 2026-11-18
 
 ### Fixed
@@ -428,7 +444,7 @@
   - Extracted pure `is_vte_version_truecolor` validator, eliminating non-thread-safe `std::env::set_var` test mutations.
 - **Android Termux Intent Opener Resiliency & Socket Fallback**:
   - Implemented multi-opener resolution in `src/player.rs` returning ordered candidate commands (`termux-am` → `termux-open` → `termux-open-url`).
-  - Added automatic in-flight fallback in `src/tui/app/playback.rs`: if `termux-am` exits with `am.sock` / socket connection failure on Android 12+, MovieBox-TUI automatically retries with `termux-open` without halting playback.
+  - Added automatic in-flight fallback in `src/tui/app/playback.rs`: if `termux-am` exits with `am.sock` / socket connection failure on Android 12+, NEXFLEX automatically retries with `termux-open` without halting playback.
   - Replaced long and inaccurate `"Run: pkg install -y termux-am"` notifications with concise mobile-formatted messages under 32 characters (`Termux Setup: Run 'pkg install termux-tools'.`, `No Player: Install a video player.`, `CLI mpv: Switch to Android Player in /settings.`).
 - **tmux Poster Image Passthrough**:
   - Replaced the hard-coded `$TMUX` detection block in `src/tui/terminal.rs` with an outer terminal graphics capability probe (`GHOSTTY_RESOURCES_DIR`, `KITTY_WINDOW_ID`, `WEZTERM_EXECUTABLE`, `ITERM_SESSION_ID`, `ALACRITTY_LOG`, `ALACRITTY_WINDOW_ID`, `foot`).
@@ -1363,7 +1379,7 @@
 
 ### Fixed
 - **Custom Download Directory Container Hierarchy**:
-  - Ensured custom download directories always maintain the standardized `MovieBox-TUI` root container (`MovieBox-TUI/Movies/...` and `MovieBox-TUI/Series/...`) without duplicating if already named `MovieBox-TUI`.
+  - Ensured custom download directories always maintain the standardized `NEXFLEX` root container (`NEXFLEX/Movies/...` and `NEXFLEX/Series/...`) without duplicating if already named `NEXFLEX`.
 - **Multiline Notification Toast Rendering**:
   - Upgraded notification toast layout to compute dynamic height and wrap multiline messages per line cleanly without horizontal middle-truncation across newlines.
   - Sanitized notification folder paths by substituting home directory with `~`.

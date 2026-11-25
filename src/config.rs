@@ -1,6 +1,6 @@
 use crate::providers::addons::models::InstalledAddon;
 use crate::providers::models::ProviderKind;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
@@ -53,7 +53,45 @@ impl Default for Config {
     }
 }
 
-pub const APP_NAME: &str = "moviebox-tui";
+pub const APP_NAME: &str = "nexflex";
+
+/// Directory name used before the NEXFLEX rename. Only read, so existing
+/// installs keep their config, history, favourites and cache.
+const LEGACY_APP_NAME: &str = "moviebox-tui";
+
+fn env_override(primary: &str, legacy: &str) -> Option<PathBuf> {
+    std::env::var(primary)
+        .or_else(|_| std::env::var(legacy))
+        .ok()
+        .map(PathBuf::from)
+}
+
+/// Adopt `<parent>/moviebox-tui` as `<parent>/nexflex` the first time NEXFLEX
+/// runs, so upgrading users lose nothing.
+fn adopt_legacy_dir(dir: PathBuf) -> PathBuf {
+    if dir.exists() {
+        return dir;
+    }
+    let Some(parent) = dir.parent().map(Path::to_path_buf) else {
+        return dir;
+    };
+    let legacy = parent.join(LEGACY_APP_NAME);
+    if !legacy.exists() {
+        return dir;
+    }
+    match std::fs::rename(&legacy, &dir) {
+        Ok(()) => log::info!(
+            "migrated legacy directory {} -> {}",
+            legacy.display(),
+            dir.display()
+        ),
+        Err(err) => log::warn!(
+            "could not migrate legacy directory {}: {err}",
+            legacy.display()
+        ),
+    }
+    dir
+}
 
 static TEST_SANDBOX_DIR: std::sync::LazyLock<Option<PathBuf>> = std::sync::LazyLock::new(|| {
     let is_test_binary = cfg!(test)
@@ -64,7 +102,7 @@ static TEST_SANDBOX_DIR: std::sync::LazyLock<Option<PathBuf>> = std::sync::LazyL
             .unwrap_or(false);
     if is_test_binary {
         let dir =
-            std::env::temp_dir().join(format!("moviebox_test_sandbox_{}", std::process::id()));
+            std::env::temp_dir().join(format!("nexflex_test_sandbox_{}", std::process::id()));
         let _ = std::fs::create_dir_all(&dir);
         Some(dir)
     } else {
@@ -85,11 +123,15 @@ pub fn is_termux_environment() -> bool {
 }
 
 pub fn config_dir() -> Option<PathBuf> {
+    config_dir_raw().map(adopt_legacy_dir)
+}
+
+fn config_dir_raw() -> Option<PathBuf> {
     if let Some(sandbox) = TEST_SANDBOX_DIR.as_ref() {
         return Some(sandbox.join("config").join(APP_NAME));
     }
-    if let Ok(dir) = std::env::var("MOVIEBOX_CONFIG_DIR") {
-        return Some(PathBuf::from(dir));
+    if let Some(dir) = env_override("NEXFLEX_CONFIG_DIR", "MOVIEBOX_CONFIG_DIR") {
+        return Some(dir);
     }
     if let Some(dir) = dirs::config_dir() {
         return Some(dir.join(APP_NAME));
@@ -118,11 +160,15 @@ pub fn config_dir() -> Option<PathBuf> {
 }
 
 pub fn data_dir() -> Option<PathBuf> {
+    data_dir_raw().map(adopt_legacy_dir)
+}
+
+fn data_dir_raw() -> Option<PathBuf> {
     if let Some(sandbox) = TEST_SANDBOX_DIR.as_ref() {
         return Some(sandbox.join("data").join(APP_NAME));
     }
-    if let Ok(dir) = std::env::var("MOVIEBOX_DATA_DIR") {
-        return Some(PathBuf::from(dir));
+    if let Some(dir) = env_override("NEXFLEX_DATA_DIR", "MOVIEBOX_DATA_DIR") {
+        return Some(dir);
     }
     if let Some(dir) = dirs::data_dir() {
         return Some(dir.join(APP_NAME));
@@ -151,10 +197,14 @@ pub fn data_dir() -> Option<PathBuf> {
 }
 
 pub fn cache_dir() -> PathBuf {
+    adopt_legacy_dir(cache_dir_raw())
+}
+
+fn cache_dir_raw() -> PathBuf {
     if let Some(sandbox) = TEST_SANDBOX_DIR.as_ref() {
         return sandbox.join("cache").join(APP_NAME);
     }
-    if let Ok(dir) = std::env::var("MOVIEBOX_CACHE_DIR") {
+    if let Ok(dir) = std::env::var("NEXFLEX_CACHE_DIR") {
         return PathBuf::from(dir);
     }
     if let Some(dir) = dirs::cache_dir() {

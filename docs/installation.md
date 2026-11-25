@@ -1,6 +1,6 @@
 # Installation
 
-MovieBox-TUI is available across macOS, Linux, Windows, and Android (Termux).
+NEXFLEX is available across macOS, Linux, Windows, and Android (Termux).
 
 ---
 
@@ -12,7 +12,7 @@ If you have [Homebrew](https://brew.sh/):
 
 ```bash
 brew tap mesamirh/moviebox-tui https://github.com/mesamirh/MovieBox-Tui
-brew install moviebox-tui
+brew install nexflex
 ```
 
 > [!NOTE]
@@ -36,7 +36,7 @@ If you have [Scoop](https://scoop.sh/):
 
 ```powershell
 scoop bucket add moviebox https://github.com/mesamirh/MovieBox-Tui
-scoop install moviebox-tui
+scoop install nexflex
 ```
 
 ### Direct PowerShell Script
@@ -69,7 +69,7 @@ termux-setup-storage
 Install directly using Cargo:
 
 ```bash
-cargo install moviebox-tui --locked
+cargo install nexflex --locked
 ```
 
 ---
@@ -80,11 +80,11 @@ Clone the repository and build the release binary:
 
 ```bash
 git clone https://github.com/mesamirh/MovieBox-Tui.git
-cd MovieBox-Tui
+cd NEXFLEX
 cargo build --release --locked
 ```
 
-The compiled binary will be located at `target/release/moviebox-tui`.
+The compiled binary will be located at `target/release/nexflex`.
 
 ---
 
@@ -102,22 +102,22 @@ gh attestation verify <archive-file> -R mesamirh/MovieBox-Tui
 
 ### Automated Installer (macOS, Linux, Windows, Android)
 
-Simply re-run your original install command (`curl ... | bash` or `irm ... | iex`). When MovieBox-TUI is already installed, the installer automatically detects it and displays an interactive menu:
+Simply re-run your original install command (`curl ... | bash` or `irm ... | iex`). When NEXFLEX is already installed, the installer automatically detects it and displays an interactive menu:
 
 ```text
-MovieBox-TUI is already installed.
+NEXFLEX is already installed.
 What would you like to do?
   1) Reinstall / Update to latest version
   2) Uninstall
   3) Cancel
 ```
 
-Enter `2` to completely remove MovieBox-TUI from your system.
+Enter `2` to completely remove NEXFLEX from your system.
 
 ### Package Managers
 
 ```bash
-brew uninstall moviebox-tui     # Homebrew (macOS)
-scoop uninstall moviebox-tui    # Scoop (Windows)
-cargo uninstall moviebox-tui    # Cargo
+brew uninstall nexflex     # Homebrew (macOS)
+scoop uninstall nexflex    # Scoop (Windows)
+cargo uninstall nexflex    # Cargo
 ```

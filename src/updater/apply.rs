@@ -1,8 +1,8 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-const STAGED_BINARY_FILENAME: &str = ".moviebox_update_staged.exe";
-const HELPER_SCRIPT_FILENAME: &str = "moviebox_update_helper.bat";
+const STAGED_BINARY_FILENAME: &str = ".nexflex_update_staged.exe";
+const HELPER_SCRIPT_FILENAME: &str = "nexflex_update_helper.bat";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SelfUpdateOutcome {
@@ -26,16 +26,16 @@ impl InstallationEnvironment {
     pub fn upgrade_instruction(&self) -> Option<&'static str> {
         match self {
             Self::Homebrew => {
-                Some("This installation is managed by Homebrew. Run: brew upgrade moviebox-tui")
+                Some("This installation is managed by Homebrew. Run: brew upgrade nexflex")
             }
             Self::Scoop => {
-                Some("This installation is managed by Scoop. Run: scoop update moviebox-tui")
+                Some("This installation is managed by Scoop. Run: scoop update nexflex")
             }
             Self::Termux => Some(
                 "Android / Termux update: run 'curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.sh | bash'",
             ),
             Self::Flatpak => Some("Running inside Flatpak. Update via: flatpak update"),
-            Self::Snap => Some("Running inside Snap. Update via: sudo snap refresh moviebox-tui"),
+            Self::Snap => Some("Running inside Snap. Update via: sudo snap refresh nexflex"),
             Self::ReadOnly => {
                 Some("Binary directory is not user-writable. Update via system package manager.")
             }
@@ -356,37 +356,37 @@ mod tests {
 
     #[test]
     fn persistent_staging_path_lives_beside_executable() {
-        let exe = Path::new("/opt/tools/moviebox-tui.exe");
+        let exe = Path::new("/opt/tools/nexflex.exe");
         let staged = persistent_staging_path(exe);
         assert_eq!(staged.parent(), Some(Path::new("/opt/tools")));
-        assert!(staged.to_string_lossy().contains("moviebox_update_staged"));
+        assert!(staged.to_string_lossy().contains("nexflex_update_staged"));
     }
 
     #[test]
     fn stale_artifacts_cover_staging_and_helper() {
-        let exe = Path::new("C:/App/moviebox-tui.exe");
+        let exe = Path::new("C:/App/nexflex.exe");
         let paths = stale_update_artifacts(exe);
         assert_eq!(paths.len(), 2);
         assert!(
             paths[0]
                 .to_string_lossy()
-                .contains("moviebox_update_staged")
+                .contains("nexflex_update_staged")
         );
         assert!(
             paths[1]
                 .to_string_lossy()
-                .contains("moviebox_update_helper.bat")
+                .contains("nexflex_update_helper.bat")
         );
     }
 
     #[test]
     fn detects_scoop_managed_environment() {
         let win_path =
-            Path::new("C:\\Users\\user\\scoop\\apps\\moviebox-tui\\0.1.23\\moviebox-tui.exe");
+            Path::new("C:\\Users\\user\\scoop\\apps\\nexflex\\0.1.23\\nexflex.exe");
         assert!(is_scoop_managed(win_path));
         assert_eq!(detect_environment(win_path), InstallationEnvironment::Scoop);
 
-        let shim_path = Path::new("C:\\Users\\user\\scoop\\shims\\moviebox-tui.exe");
+        let shim_path = Path::new("C:\\Users\\user\\scoop\\shims\\nexflex.exe");
         assert!(is_scoop_managed(shim_path));
         assert_eq!(
             detect_environment(shim_path),
@@ -397,8 +397,8 @@ mod tests {
     #[test]
     fn helper_script_waits_moves_and_cleans_up() {
         let script = render_helper_script(
-            Path::new("C:\\App\\update dir\\.moviebox_update_staged.exe"),
-            Path::new("C:\\App\\moviebox-tui.exe"),
+            Path::new("C:\\App\\update dir\\.nexflex_update_staged.exe"),
+            Path::new("C:\\App\\nexflex.exe"),
             4242,
         );
         let lines: Vec<&str> = script.split("\r\n").collect();
@@ -407,14 +407,14 @@ mod tests {
             "%SystemRoot%\\System32\\tasklist.exe /FI \"PID eq 4242\" 2>NUL | %SystemRoot%\\System32\\find.exe \"4242\" >NUL"
         ));
         assert!(script.contains(
-            "move /y \"C:\\App\\update dir\\.moviebox_update_staged.exe\" \"C:\\App\\moviebox-tui.exe\" >NUL 2>&1"
+            "move /y \"C:\\App\\update dir\\.nexflex_update_staged.exe\" \"C:\\App\\nexflex.exe\" >NUL 2>&1"
         ));
         assert!(script.contains(":move_loop"));
         assert!(script.contains("if %attempts% LSS 10 ("));
         assert!(script.contains(
-            "if exist \"C:\\App\\update dir\\.moviebox_update_staged.exe\" del /f /q \"C:\\App\\update dir\\.moviebox_update_staged.exe\""
+            "if exist \"C:\\App\\update dir\\.nexflex_update_staged.exe\" del /f /q \"C:\\App\\update dir\\.nexflex_update_staged.exe\""
         ));
-        assert!(script.contains("start \"\" \"C:\\App\\moviebox-tui.exe\""));
+        assert!(script.contains("start \"\" \"C:\\App\\nexflex.exe\""));
         assert_eq!(*lines.last().expect("non-empty"), "del \"%~f0\"");
     }
 
@@ -422,7 +422,7 @@ mod tests {
     fn cleanup_removes_only_known_artifacts() {
         let dir = std::env::temp_dir().join(format!("mbx_apply_test_{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
-        let exe = dir.join("moviebox-tui.exe");
+        let exe = dir.join("nexflex.exe");
         std::fs::write(&exe, b"current").unwrap();
         let staged = persistent_staging_path(&exe);
         std::fs::write(&staged, b"staged").unwrap();
@@ -435,18 +435,18 @@ mod tests {
     #[test]
     fn resolve_executable_path_handles_existing_and_deleted_suffixes() {
         let temp = tempfile::tempdir().unwrap();
-        let real_exe = temp.path().join("moviebox-tui");
+        let real_exe = temp.path().join("nexflex");
         std::fs::write(&real_exe, b"test-bin").unwrap();
 
         assert_eq!(resolve_executable_path(&real_exe), real_exe);
 
-        let deleted_path = temp.path().join("moviebox-tui (deleted)");
+        let deleted_path = temp.path().join("nexflex (deleted)");
         assert_eq!(resolve_executable_path(&deleted_path), real_exe);
 
-        let old_deleted_path = temp.path().join("moviebox-tui.old (deleted)");
+        let old_deleted_path = temp.path().join("nexflex.old (deleted)");
         assert_eq!(resolve_executable_path(&old_deleted_path), real_exe);
 
-        let old_path = temp.path().join("moviebox-tui.old");
+        let old_path = temp.path().join("nexflex.old");
         assert_eq!(resolve_executable_path(&old_path), real_exe);
     }
 }

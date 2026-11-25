@@ -54,18 +54,18 @@ impl TargetPlatform {
 
     pub fn expected_asset_name(self) -> &'static str {
         match self {
-            Self::MacosUniversal => "MovieBox_macOS_Universal.tar.gz",
-            Self::LinuxX64 => "MovieBox_Linux_x64.tar.gz",
-            Self::LinuxArm64 => "MovieBox_Linux_arm64.tar.gz",
-            Self::WindowsX64 => "MovieBox_Windows_x64.zip",
-            Self::WindowsArm64 => "MovieBox_Windows_arm64.zip",
+            Self::MacosUniversal => "NEXFLEX_macOS_Universal.tar.gz",
+            Self::LinuxX64 => "NEXFLEX_Linux_x64.tar.gz",
+            Self::LinuxArm64 => "NEXFLEX_Linux_arm64.tar.gz",
+            Self::WindowsX64 => "NEXFLEX_Windows_x64.zip",
+            Self::WindowsArm64 => "NEXFLEX_Windows_arm64.zip",
         }
     }
 
     pub fn expected_binary_name(self) -> &'static str {
         match self {
-            Self::WindowsX64 | Self::WindowsArm64 => "moviebox-tui.exe",
-            _ => "moviebox-tui",
+            Self::WindowsX64 | Self::WindowsArm64 => "nexflex.exe",
+            _ => "nexflex",
         }
     }
 }
@@ -130,19 +130,19 @@ mod tests {
         let linux_asset = empty_assets_release
             .find_compatible_asset(TargetPlatform::LinuxX64)
             .expect("should generate synthetic asset");
-        assert_eq!(linux_asset.name, "MovieBox_Linux_x64.tar.gz");
+        assert_eq!(linux_asset.name, "NEXFLEX_Linux_x64.tar.gz");
         assert_eq!(
             linux_asset.download_url,
-            "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.16/MovieBox_Linux_x64.tar.gz"
+            "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.16/NEXFLEX_Linux_x64.tar.gz"
         );
 
         let mac_asset = empty_assets_release
             .find_compatible_asset(TargetPlatform::MacosUniversal)
             .expect("should generate synthetic asset");
-        assert_eq!(mac_asset.name, "MovieBox_macOS_Universal.tar.gz");
+        assert_eq!(mac_asset.name, "NEXFLEX_macOS_Universal.tar.gz");
         assert_eq!(
             mac_asset.download_url,
-            "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.16/MovieBox_macOS_Universal.tar.gz"
+            "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.16/NEXFLEX_macOS_Universal.tar.gz"
         );
 
         let checksum = empty_assets_release

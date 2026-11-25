@@ -1,19 +1,19 @@
 <div align="center">
 
-# MovieBox-TUI
+# NEXFLEX
 
 **লোকাল মিডিয়া প্লেয়ার দিয়ে মুভি, টিভি শো এবং লাইভ টিভি খোঁজা, ডাউনলোড ও স্ট্রিম করার টার্মিনাল ইন্টারফেস।**
 
 [ English ](README.md) • [ বাংলা ](README_BN.md) • [ हिन्दी ](README_HI.md) • [ Español ](README_ES.md)
 
 [![CI](https://img.shields.io/github/actions/workflow/status/mesamirh/MovieBox-Tui/ci.yml?branch=main&label=CI&logo=github&style=flat)](https://github.com/mesamirh/MovieBox-Tui/actions/workflows/ci.yml)
-[![crates.io](https://img.shields.io/crates/v/moviebox-tui.svg?logo=rust&style=flat)](https://crates.io/crates/moviebox-tui)
+[![crates.io](https://img.shields.io/crates/v/nexflex.svg?logo=rust&style=flat)](https://crates.io/crates/nexflex)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg?style=flat)](#license)
 [![Telegram](https://img.shields.io/badge/Telegram-Channel-2CA5E0?style=flat&logo=telegram&logoColor=white)](https://t.me/getfromme)
 [![Support](https://img.shields.io/badge/Support-Crypto-F7931A?style=flat&logo=bitcoin&logoColor=white)](#optional-support)
 </div>
 
-[moviebox-tui-walkthrough.webm](https://github.com/user-attachments/assets/7554a7e5-6ff5-49ec-9d87-f821ea99950e)
+[nexflex-walkthrough.webm](https://github.com/user-attachments/assets/7554a7e5-6ff5-49ec-9d87-f821ea99950e)
 
 ## মূল সুবিধাসমূহ
 
@@ -40,7 +40,7 @@
 আপনার সিস্টেমে [Homebrew](https://brew.sh/) থাকলে (macOS):
 ```bash
 brew tap mesamirh/moviebox-tui https://github.com/mesamirh/MovieBox-Tui
-brew install moviebox-tui
+brew install nexflex
 ```
 
 > **নোট:** প্রথমবার ইনস্টলের সময় Homebrew যদি ট্যাপ ভেরিফিকেশন চায়, তবে `brew trust mesamirh/moviebox-tui` রান করুন।
@@ -55,7 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.
 আপনার সিস্টেমে [Scoop](https://scoop.sh/) থাকলে (সুপারিশকৃত):
 ```powershell
 scoop bucket add moviebox https://github.com/mesamirh/MovieBox-Tui
-scoop install moviebox-tui
+scoop install nexflex
 ```
 
 PowerShell স্ক্রিপ্ট দিয়ে সরাসরি ইনস্টল (কোনো প্যাকেজ ম্যানেজার লাগবে না):
@@ -81,13 +81,13 @@ termux-setup-storage
 
 crates.io থেকে ইনস্টল:
 ```bash
-cargo install moviebox-tui --locked
+cargo install nexflex --locked
 ```
 
 সোর্স কোড থেকে কম্পাইল:
 ```bash
 git clone https://github.com/mesamirh/MovieBox-Tui.git
-cd MovieBox-Tui
+cd NEXFLEX
 cargo build --release --locked
 ```
 
@@ -110,9 +110,9 @@ gh attestation verify <archive-file> -R mesamirh/MovieBox-Tui
 
 অথবা প্যাকেজ ম্যানেজারের মাধ্যমে:
 ```bash
-brew uninstall moviebox-tui     # Homebrew
-scoop uninstall moviebox-tui    # Scoop
-cargo uninstall moviebox-tui    # Cargo
+brew uninstall nexflex     # Homebrew
+scoop uninstall nexflex    # Scoop
+cargo uninstall nexflex    # Cargo
 ```
 
 </details>
@@ -120,7 +120,7 @@ cargo uninstall moviebox-tui    # Cargo
 ## কুইক স্টার্ট
 
 ```bash
-moviebox-tui
+nexflex
 ```
 
 - যেকোনো টাইটেল লিখে সার্চ করুন, প্লে করতে `Enter` চাপুন।
@@ -163,7 +163,7 @@ moviebox-tui
 
 ## গোপনীয়তা (Privacy)
 
-MovieBox-TUI সম্পূর্ণ টেলিমেট্রি ও ট্র্যাকিং মুক্ত। সমস্ত সার্চ হিস্ট্রি, বুকমার্ক এবং কনফিগারেশন ফাইল কেবল আপনার লোকাল ফাইলসিস্টেমেই সুরক্ষিত থাকে।
+NEXFLEX সম্পূর্ণ টেলিমেট্রি ও ট্র্যাকিং মুক্ত। সমস্ত সার্চ হিস্ট্রি, বুকমার্ক এবং কনফিগারেশন ফাইল কেবল আপনার লোকাল ফাইলসিস্টেমেই সুরক্ষিত থাকে।
 
 ## লাইসেন্স
 
