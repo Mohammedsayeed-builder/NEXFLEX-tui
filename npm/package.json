@@ -1,0 +1,44 @@
+{
+  "name": "nexflex",
+  "version": "0.1.30",
+  "description": "NEXFLEX - a fast, zero-config, telemetry-free terminal app for finding, streaming and downloading media. Created by Mohammed Sayeed.",
+  "keywords": [
+    "tui",
+    "streaming",
+    "movies",
+    "terminal",
+    "media-player",
+    "nexflex"
+  ],
+  "homepage": "https://github.com/mesamirh/MovieBox-Tui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mesamirh/MovieBox-Tui.git"
+  },
+  "license": "MIT OR Apache-2.0",
+  "author": "Mohammed Sayeed",
+  "contributors": [
+    "mesamirh (MovieBox-TUI)"
+  ],
+  "bin": {
+    "nexflex": "bin/nexflex.js"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "optionalDependencies": {
+    "@nexflex/linux-x64": "0.1.30",
+    "@nexflex/linux-arm64": "0.1.30",
+    "@nexflex/darwin-x64": "0.1.30",
+    "@nexflex/darwin-arm64": "0.1.30",
+    "@nexflex/win32-x64": "0.1.30"
+  },
+  "scripts": {
+    "prepack": "node scripts/check-platforms.mjs"
+  }
+}

@@ -1,0 +1,8 @@
+# Created with NEXFLEX release tooling. Submit with:
+#   winget validate --manifest .
+#   winget install --manifest .
+PackageIdentifier: MohammedSayeed.NEXFLEX
+PackageVersion: 0.1.30
+DefaultLocale: en-US
+ManifestType: version
+ManifestVersion: 1.6.0

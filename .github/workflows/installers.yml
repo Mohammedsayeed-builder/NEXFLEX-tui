@@ -1,0 +1,157 @@
+name: installers
+
+# Installs NEXFLEX from scratch with the real installer scripts on every OS.
+# The release artifacts are built in the job and served from the workspace, so
+# no GitHub release is needed.
+
+on:
+  push:
+    branches: [main, nexflex-upgrade]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build release binary
+        run: cargo build --release --locked
+
+      - name: Package artifacts (unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/pkg rel
+          cp target/release/nexflex dist/pkg/
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            name=NEXFLEX_Linux_x64.tar.gz
+          else
+            name=NEXFLEX_macOS_Universal.tar.gz
+          fi
+          tar -czf "rel/$name" -C dist/pkg .
+          if command -v sha256sum >/dev/null 2>&1; then
+            (cd rel && sha256sum "$name" > SHA256SUMS)
+          else
+            (cd rel && shasum -a 256 "$name" > SHA256SUMS)
+          fi
+          cat rel/SHA256SUMS
+
+      - name: Package artifacts (windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist\pkg, rel | Out-Null
+          Copy-Item target\release\nexflex.exe dist\pkg\
+          Compress-Archive -Path dist\pkg\* -DestinationPath rel\NEXFLEX_Windows_x64.zip
+          $hash = (Get-FileHash -Path rel\NEXFLEX_Windows_x64.zip -Algorithm SHA256).Hash.ToLower()
+          "$hash  NEXFLEX_Windows_x64.zip" | Out-File -Encoding ascii rel\SHA256SUMS
+          Get-Content rel\SHA256SUMS
+
+      - name: Install with install.sh (unix, animated)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          NEXFLEX_RELEASE_URL="file://$PWD/rel" \
+            ./install.sh --version v0.0.0 --dir "$PWD/out" --no-modify-path --yes
+          "$PWD/out/nexflex" --version
+          "$PWD/out/nexflex" --version | grep -q "Based on MovieBox-TUI by mesamirh"
+
+      - name: Install with install.sh (unix, plain / piped)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          NEXFLEX_RELEASE_URL="file://$PWD/rel" \
+            ./install.sh --version v0.0.0 --dir "$PWD/out2" --no-modify-path --no-animation | cat
+          "$PWD/out2/nexflex" --version
+
+      - name: Reject a tampered checksum (unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -r rel rel_bad
+          sed -i.bak 's/^./f/' rel_bad/SHA256SUMS || true
+          if NEXFLEX_RELEASE_URL="file://$PWD/rel_bad" \
+             ./install.sh --version v0.0.0 --dir "$PWD/out3" --no-modify-path --no-animation; then
+            echo "installer accepted a bad checksum" >&2
+            exit 1
+          fi
+          test ! -e "$PWD/out3/nexflex"
+
+      - name: Install with install.ps1 (Windows PowerShell 5.1)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $env:NEXFLEX_RELEASE_URL = "file:///" + ($PWD.Path -replace '\\','/') + "/rel"
+          .\install.ps1 -Version v0.0.0 -InstallDir "$PWD\out" -NoModifyPath -Yes
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & "$PWD\out\nexflex.exe" --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Install with install.ps1 (PowerShell 7)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $env:NEXFLEX_RELEASE_URL = "file:///" + ($PWD.Path -replace '\\','/') + "/rel"
+          ./install.ps1 -Version v0.0.0 -InstallDir "$PWD\out2" -NoModifyPath -NoAnimation -Yes
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & "$PWD\out2\nexflex.exe" --version
+
+      - name: Uninstall (unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          HOME="$PWD/fakehome" NEXFLEX_RELEASE_URL="file://$PWD/rel" \
+            ./install.sh --version v0.0.0 --no-modify-path --no-animation >/dev/null
+          test -x "$PWD/fakehome/.local/bin/nexflex"
+          HOME="$PWD/fakehome" ./install.sh --uninstall --no-animation >/dev/null
+          test ! -e "$PWD/fakehome/.local/bin/nexflex"
+
+  npm-launcher:
+    name: npm launcher (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Launcher hands over to the prebuilt binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check npm/bin/nexflex.js
+          node --check npm/lib/platform.js
+          node --check npm/lib/installer-ui.js
+          node -e "
+            const p = require('./npm/lib/platform.js');
+            console.log('platform:', p.platformLabel(), 'supported:', p.isSupported());
+          "
+          # fake platform package + binary, then check the launcher execs it
+          os=$(node -p "process.platform"); cpu=$(node -p "process.arch")
+          exe=nexflex; [ "$os" = "win32" ] && exe=nexflex.exe
+          mkdir -p "node_modules/@nexflex/$os-$cpu/bin"
+          printf '{"name":"@nexflex/%s-%s","version":"0.0.0"}' "$os" "$cpu" > "node_modules/@nexflex/$os-$cpu/package.json"
+          printf '#!/bin/sh\necho "nexflex 0.0.0"\n' > "node_modules/@nexflex/$os-$cpu/bin/$exe"
+          chmod +x "node_modules/@nexflex/$os-$cpu/bin/$exe"
+          out=$(HOME="$PWD/fakehome" node npm/bin/nexflex.js --version)
+          echo "$out" | grep -q "nexflex 0.0.0"

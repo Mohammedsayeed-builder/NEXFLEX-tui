@@ -5,6 +5,8 @@ param(
     [switch]$DryRun,
     [switch]$NoModifyPath,
     [switch]$Uninstall,
+    [switch]$NoAnimation,
+    [switch]$Yes,
     [switch]$Help
 )
 
@@ -21,7 +23,161 @@ Set-StrictMode -Version Latest
 $AppName = "NEXFLEX"
 $BinName = "nexflex.exe"
 $Repo = "mesamirh/MovieBox-Tui"
+$Creator = "Mohammed Sayeed"
 $DefaultInstallDir = Join-Path $env:LOCALAPPDATA "Programs\NEXFLEX\bin"
+
+# ---------------------------------------------------------------------------
+# Output capabilities: VT sequences, truecolor -> 256 -> plain, Unicode -> ASCII
+# ---------------------------------------------------------------------------
+$ESC = [char]27
+$script:CursorHidden = $false
+
+function Enable-VirtualTerminal {
+    try {
+        if (-not ("Nexflex.ConsoleMode" -as [type])) {
+            Add-Type -Namespace Nexflex -Name ConsoleMode -MemberDefinition @"
+[DllImport("kernel32.dll", SetLastError = true)] public static extern IntPtr GetStdHandle(int nStdHandle);
+[DllImport("kernel32.dll", SetLastError = true)] public static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+[DllImport("kernel32.dll", SetLastError = true)] public static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+"@
+        }
+        $handle = [Nexflex.ConsoleMode]::GetStdHandle(-11)
+        $mode = [uint32]0
+        if ([Nexflex.ConsoleMode]::GetConsoleMode($handle, [ref]$mode)) {
+            $newMode = $mode -bor 0x0004
+            return [Nexflex.ConsoleMode]::SetConsoleMode($handle, $newMode)
+        }
+    } catch {
+        return $false
+    }
+    return $false
+}
+
+$script:IsTTY = $true
+try { $script:IsTTY = -not [Console]::IsOutputRedirected } catch { $script:IsTTY = $true }
+$script:IsCI = [bool]($env:CI -or $env:GITHUB_ACTIONS)
+$script:Unicode = $true
+try { $script:Unicode = ([Console]::OutputEncoding.WebName -match "utf") } catch { $script:Unicode = $true }
+$script:VtEnabled = $false
+if ($script:IsTTY) { $script:VtEnabled = Enable-VirtualTerminal }
+
+$script:ColorMode = "plain"
+if ($script:VtEnabled -and -not $env:NO_COLOR) {
+    if (($env:COLORTERM -in @("truecolor", "24bit")) -or $env:WT_SESSION -or $env:TERM_PROGRAM) {
+        $script:ColorMode = "truecolor"
+    } else {
+        $script:ColorMode = "256"
+    }
+}
+
+$script:Anim = $false
+if ($script:IsTTY -and $script:VtEnabled -and -not $NoAnimation -and -not $script:IsCI -and -not $env:NO_COLOR) {
+    $script:Anim = $true
+}
+# Escape hatch for terminals or CI setups that want the animation anyway.
+if ($env:NEXFLEX_FORCE_ANIM -and -not $NoAnimation) {
+    $script:VtEnabled = $true
+    $script:Anim = $true
+    if ($script:ColorMode -eq "plain") { $script:ColorMode = "256" }
+}
+
+$C = @{ Reset=""; Bold=""; Dim=""; Mauve=""; Blue=""; Sapphire=""; Lavender=""; Teal=""; Green=""; Yellow=""; Red=""; Text=""; Subtext=""; Muted="" }
+if ($script:ColorMode -eq "truecolor") {
+    $C.Reset = "$ESC[0m"; $C.Bold = "$ESC[1m"; $C.Dim = "$ESC[2m"
+    $C.Mauve = "$ESC[38;2;203;166;247m"; $C.Blue = "$ESC[38;2;137;180;250m"
+    $C.Sapphire = "$ESC[38;2;116;199;236m"; $C.Lavender = "$ESC[38;2;180;190;254m"
+    $C.Teal = "$ESC[38;2;148;226;213m"; $C.Green = "$ESC[38;2;166;227;161m"
+    $C.Yellow = "$ESC[38;2;249;226;175m"; $C.Red = "$ESC[38;2;243;139;168m"
+    $C.Text = "$ESC[38;2;205;214;244m"; $C.Subtext = "$ESC[38;2;166;173;200m"
+    $C.Muted = "$ESC[38;2;108;112;134m"
+} elseif ($script:ColorMode -eq "256") {
+    $C.Reset = "$ESC[0m"; $C.Bold = "$ESC[1m"; $C.Dim = "$ESC[2m"
+    $C.Mauve = "$ESC[38;5;183m"; $C.Blue = "$ESC[38;5;111m"
+    $C.Sapphire = "$ESC[38;5;117m"; $C.Lavender = "$ESC[38;5;147m"
+    $C.Teal = "$ESC[38;5;116m"; $C.Green = "$ESC[38;5;151m"
+    $C.Yellow = "$ESC[38;5;223m"; $C.Red = "$ESC[38;5;211m"
+    $C.Text = "$ESC[38;5;252m"; $C.Subtext = "$ESC[38;5;145m"
+    $C.Muted = "$ESC[38;5;242m"
+}
+
+$script:RowColors = @($C.Mauve, $C.Blue, $C.Sapphire, $C.Teal, $C.Green, $C.Lavender)
+$script:OkMark = if ($script:Unicode) { [char]0x2714 } else { "OK" }
+$script:FailMark = if ($script:Unicode) { [char]0x2716 } else { "!!" }
+$script:InfoMark = if ($script:Unicode) { [char]0x2139 } else { "i" }
+
+$script:ArtUnicode = @(
+    "███╗   ██╗███████╗██╗  ██╗███████╗██╗     ███████╗██╗  ██╗",
+    "████╗  ██║██╔════╝╚██╗██╔╝██╔════╝██║     ██╔════╝╚██╗██╔╝",
+    "██╔██╗ ██║█████╗   ╚███╔╝ █████╗  ██║     █████╗   ╚███╔╝ ",
+    "██║╚██╗██║██╔══╝   ██╔██╗ ██╔══╝  ██║     ██╔══╝   ██╔██╗ ",
+    "██║ ╚████║███████╗██╔╝ ██╗██║     ███████╗███████╗██╔╝ ██╗",
+    "╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝     ╚══════╝╚══════╝╚═╝  ╚═╝"
+)
+$script:ArtAscii = @(
+    " _   _ _______  _______ _     _______  __",
+    "| \ | | ____\ \/ /  ___| |   | ____\ \/ /",
+    "|  \| |  _|  \  /| |_  | |   |  _|  \  /",
+    "| |\  | |___ /  \|  _| | |___| |___ /  \",
+    "|_| \_|_____/_/\_\_|   |_____|_____/_/\_\"
+)
+$script:Art = $script:ArtUnicode
+$script:ArtWidth = 58
+
+function Hide-Cursor {
+    if ($script:Anim -and -not $script:CursorHidden) {
+        [Console]::Out.Write("$ESC[?25l")
+        $script:CursorHidden = $true
+    }
+}
+
+function Restore-Cursor {
+    if ($script:CursorHidden) {
+        [Console]::Out.Write("$ESC[?25h")
+        $script:CursorHidden = $false
+    }
+}
+
+# Restore the cursor on any terminating error, and on Ctrl+C.
+trap {
+    Restore-Cursor
+    Write-Host "  $($C.Red)$($script:FailMark)$($C.Reset) $_"
+    exit 1
+}
+try {
+    [Console]::add_CancelKeyPress([ConsoleCancelEventHandler]{
+        param($sender, $eventArgs)
+        [Console]::Out.Write([string][char]27 + "[?25h")
+    })
+} catch {}
+
+function Select-Art {
+    param([int]$Cols)
+    if ($script:Unicode) {
+        $script:Art = $script:ArtUnicode
+        $script:ArtWidth = 58
+    } else {
+        $script:Art = $script:ArtAscii
+        $script:ArtWidth = 42
+    }
+}
+
+function Get-GlitchedLines {
+    param([int]$Percent)
+    $chars = "01#$%&@*+=<>/"
+    $out = @()
+    foreach ($line in $script:Art) {
+        $sb = New-Object System.Text.StringBuilder
+        foreach ($ch in $line.ToCharArray()) {
+            if ($ch -ne " " -and (Get-Random -Maximum 100) -lt $Percent) {
+                [void]$sb.Append($chars[(Get-Random -Maximum $chars.Length)])
+            } else {
+                [void]$sb.Append($ch)
+            }
+        }
+        $out += $sb.ToString()
+    }
+    return ,$out
+}
 
 if ($Help) {
     Write-Host @"
@@ -126,48 +282,151 @@ function Get-TerminalCols {
     return $Cols
 }
 
+function Print-Art {
+    param([string[]]$Lines, [string[]]$Colors, [int]$Pad)
+    for ($i = 0; $i -lt $Lines.Count; $i++) {
+        $line = $Lines[$i]
+        if ($line.Length -lt $script:ArtWidth) { $line = $line.PadRight($script:ArtWidth) }
+        $prefix = if ($Pad -gt 0) { " " * $Pad } else { "" }
+        if ($Colors -and $Colors[$i]) {
+            [Console]::Out.WriteLine("$prefix$($Colors[$i])$line$($C.Reset)")
+        } else {
+            [Console]::Out.WriteLine("$prefix$line")
+        }
+    }
+}
+
 function Print-Header {
     $Cols = Get-TerminalCols
-
-    if ($Cols -ge 65) {
-        $BannerWidth = 60
-        $Lines = @(
-            " __  __            _      ____              _____ _   _ ___ ",
-            "|  \/  | _____   _(_) ___| __ )  _____  __ |_   _| | | |_ _|",
-            "| |\/| |/ _ \ \ / / |/ _ \  _ \ / _ \ \/ /   | | | | | || | ",
-            "| |  | | (_) \ V /| |  __/ |_) | (_) >  <    | | | |_| || | ",
-            "|_|  |_|\___/ \_/ |_|\___|____/ \___/_/\_\   |_|  \___/|___|"
-        )
-    } elseif ($Cols -ge 36) {
-        $BannerWidth = 31
-        $Lines = @(
-            "█▀▄▀█ █▀█ █ █ █ █▀▀ █▀▄ █▀█ ▀▄▀",
-            "█ ▀ █ █▄█ ▀▄▀ █ ██▄ █▄▀ █▄█ █ █"
-        )
-    } else {
-        $BannerWidth = 12
-        $Lines = @(
-            "NEXFLEX"
-        )
-    }
-
-    $BannerPad = [Math]::Max(0, [int][Math]::Floor(($Cols - $BannerWidth) / 2))
-    $Sub = "Official Installer"
+    Select-Art -Cols $Cols
+    $Pad = [Math]::Max(0, [int][Math]::Floor(($Cols - $script:ArtWidth) / 2))
+    $Sub = "Created by $Creator"
     $SubPad = [Math]::Max(0, [int][Math]::Floor(($Cols - $Sub.Length) / 2))
 
-    foreach ($Line in $Lines) {
-        if ($BannerPad -gt 0) {
-            Write-Host ((" " * $BannerPad) + $Line) -ForegroundColor Magenta
-        } else {
-            Write-Host $Line -ForegroundColor Magenta
+    if (-not $script:Anim) {
+        if (-not $script:IsTTY) {
+            Write-Host "$AppName installer - Created by $Creator"
+            return
+        }
+        Print-Art -Lines $script:Art -Colors $null -Pad $Pad
+        Write-Host ((" " * $SubPad) + $Sub)
+        Write-Host ""
+        return
+    }
+
+    Hide-Cursor
+    $rows = $script:Art.Count
+
+    # Phase 1 - decode/glitch to clean
+    $thresholds = @(92, 62, 32, 10)
+    for ($t = 0; $t -lt $thresholds.Count; $t++) {
+        $frame = Get-GlitchedLines -Percent $thresholds[$t]
+        Print-Art -Lines $frame -Colors $script:RowColors -Pad $Pad
+        if ($t -lt $thresholds.Count - 1) {
+            [Console]::Out.Write("$ESC[$($rows)A")
+            Start-Sleep -Milliseconds 110
         }
     }
 
-    if ($SubPad -gt 0) {
-        Write-Host ((" " * $SubPad) + $Sub + "`n") -ForegroundColor Cyan
-    } else {
-        Write-Host ($Sub + "`n") -ForegroundColor Cyan
+    # Phase 2 - gradient sweep
+    for ($shift = 0; $shift -lt 4; $shift++) {
+        $colors = @()
+        for ($i = 0; $i -lt $rows; $i++) {
+            if ($shift -eq 3) { $colors += $C.Mauve }
+            else { $colors += $script:RowColors[($i + $shift) % $script:RowColors.Count] }
+        }
+        Print-Art -Lines $script:Art -Colors $colors -Pad $Pad
+        if ($shift -lt 3) {
+            [Console]::Out.Write("$ESC[$($rows)A")
+            Start-Sleep -Milliseconds 70
+        }
     }
+
+    Write-Host ((" " * $SubPad) + $C.Sapphire + $C.Bold + $Sub + $C.Reset)
+    Write-Host ""
+    Restore-Cursor
+}
+
+function Write-Strip {
+    param([int]$Current, [string]$State = "run")
+    $segments = @()
+    for ($i = 1; $i -le 5; $i++) {
+        if ($i -lt $Current) { $seg = if ($script:Unicode) { "▓▓▓" } else { "###" } }
+        elseif ($i -eq $Current) {
+            switch ($State) {
+                "done" { $seg = if ($script:Unicode) { "▓▓▓" } else { "###" } }
+                "fail" { $seg = if ($script:Unicode) { "×××" } else { "!!!" } }
+                default { $seg = if ($script:Unicode) { "▒▒▒" } else { "~~~" } }
+            }
+        } else { $seg = if ($script:Unicode) { "░░░" } else { "   " } }
+        $segments += $seg
+    }
+    $sep = if ($script:Unicode) { "│" } else { "|" }
+    $bar = $segments -join $sep
+    if ($script:Unicode) {
+        Write-Host "  $($C.Sapphire)▐$bar▌$($C.Reset)"
+    } else {
+        Write-Host "  [$bar]"
+    }
+}
+
+function Start-Step {
+    param([int]$Index, [string]$Label)
+    $script:StepIndex = $Index
+    $script:StepLabel = $Label
+    if ($script:Anim) {
+        Write-Strip -Current $Index -State "run"
+    } else {
+        Write-Host "  [$Index/5] $Label..." -NoNewline
+    }
+}
+
+function Complete-Step {
+    param([string]$Label)
+    if ($script:Anim) {
+        [Console]::Out.Write("$ESC[K")
+        Write-Strip -Current $script:StepIndex -State "done"
+    } else {
+        Write-Host " done"
+    }
+    Write-Host "  $($C.Green)$($script:OkMark)$($C.Reset) $($C.Text)$Label$($C.Reset)"
+}
+
+function Fail-Step {
+    param([string]$Label, [string]$Reason)
+    if ($script:Anim) {
+        [Console]::Out.Write("$ESC[K")
+        Write-Strip -Current $script:StepIndex -State "fail"
+    } else {
+        Write-Host " failed"
+    }
+    Write-Host "  $($C.Red)$($script:FailMark)$($C.Reset) $($C.Text)$Label$($C.Reset)"
+    if ($Reason) { Write-Host "    $($C.Muted)$Reason$($C.Reset)" }
+}
+
+function Invoke-SpinnerJob {
+    param([string]$Label, [scriptblock]$Action, [object[]]$Arguments)
+    if (-not $script:Anim) { return (& $Action @Arguments) }
+    $job = Start-Job -ScriptBlock $Action -ArgumentList $Arguments
+    $frames = @("⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏")
+    $i = 0
+    while ($job.State -eq "Running" -or $job.State -eq "NotStarted") {
+        $f = $frames[$i % $frames.Count]
+        [Console]::Out.Write("`r$ESC[K  $($C.Sapphire)$f$($C.Reset) $($C.Text)$Label$($C.Reset)")
+        Start-Sleep -Milliseconds 80
+        $i++
+    }
+    [Console]::Out.Write("`r$ESC[K")
+    $jobErrors = @()
+    $result = Receive-Job -Job $job -ErrorAction SilentlyContinue -ErrorVariable jobErrors
+    $failed = ($job.State -ne "Completed")
+    Remove-Job -Job $job -Force -ErrorAction SilentlyContinue
+    if ($failed) {
+        $reason = ($jobErrors | Out-String).Trim()
+        if (-not $reason) { $reason = "the background step did not complete" }
+        throw $reason
+    }
+    return $result
 }
 
 function Do-Uninstall {
@@ -219,9 +478,11 @@ Print-Header
 
 $Architecture = if ($env:PROCESSOR_ARCHITEW6432) { $env:PROCESSOR_ARCHITEW6432 } else { $env:PROCESSOR_ARCHITECTURE }
 if ($Architecture -eq "ARM64") {
+    $ArchLabel = "Windows/arm64"
     $ArchiveName = "NEXFLEX_Windows_arm64.zip"
     $PlatformName = "Windows (arm64)"
 } elseif ($Architecture -eq "AMD64") {
+    $ArchLabel = "Windows/x64"
     $ArchiveName = "NEXFLEX_Windows_x64.zip"
     $PlatformName = "Windows (x64)"
 } else {
@@ -229,7 +490,7 @@ if ($Architecture -eq "ARM64") {
     return
 }
 
-Write-Step "[1/4] Checking environment & resolving version..."
+Write-Step "Resolving release version..."
 
 $TargetVersion = $Version
 if (-not $TargetVersion) {
@@ -258,7 +519,7 @@ if (-not $TargetVersion) {
     return
 }
 
-Write-Success "[1/4] Environment ready ($PlatformName - $TargetVersion)"
+Write-Success "Environment ready ($PlatformName, $TargetVersion)"
 
 $EffectiveInstallDir = if ($InstallDir) { $InstallDir } else { $DefaultInstallDir }
 $ExePath = Join-Path $EffectiveInstallDir $BinName
@@ -298,40 +559,64 @@ if (Test-Path $ExePath) {
 }
 
 if ($DryRun) {
-    Write-Success "[Dry Run] Target package: $ArchiveName"
-    Write-Success "[Dry Run] Target install directory: $ExePath"
-    Write-Success "[Dry Run] All preflight checks passed."
+    Start-Step -Index 1 -Label "Detecting platform"
+    Complete-Step "Target package: $ArchiveName"
+    Write-Host "  Dry run - nothing was written."
+    Write-Host "  Install path: $ExePath"
+    Write-Host ""
     return
 }
+
+Start-Step -Index 1 -Label "Detecting platform"
+Complete-Step "Platform detected: $ArchLabel -> $ArchiveName"
+Write-Host "  $($C.Muted)·$($C.Reset) Resolving release version..."
+Write-Host "  $($C.Green)$($script:OkMark)$($C.Reset) $($C.Text)Release: $TargetVersion$($C.Reset)"
 
 $TempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("nexflex-" + [guid]::NewGuid())
 New-Item -ItemType Directory -Force -Path $TempDir | Out-Null
 
 $ZipFile = Join-Path $TempDir $ArchiveName
 $ChecksumFile = Join-Path $TempDir "SHA256SUMS"
-$BaseUrl = "https://github.com/$Repo/releases/download/$TargetVersion"
+if ($env:NEXFLEX_RELEASE_URL) {
+    $BaseUrl = $env:NEXFLEX_RELEASE_URL.TrimEnd("/")
+} else {
+    $BaseUrl = "https://github.com/$Repo/releases/download/$TargetVersion"
+}
 $Url = "$BaseUrl/$ArchiveName"
 
 try {
-    Write-Step "[2/4] Downloading $ArchiveName..."
-    Invoke-WebRequest -Uri $Url -OutFile $ZipFile -UseBasicParsing
-    Invoke-WebRequest -Uri "$BaseUrl/SHA256SUMS" -OutFile $ChecksumFile -UseBasicParsing
-    try { Unblock-File -Path $ZipFile -ErrorAction SilentlyContinue } catch {}
-    Write-Success "[2/4] Downloaded $ArchiveName"
+    Start-Step -Index 2 -Label "Downloading $ArchiveName"
+    $download = {
+        param($u, $z, $c)
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $u -OutFile $z -UseBasicParsing
+        Invoke-WebRequest -Uri $c -OutFile "$z.SHA256SUMS" -UseBasicParsing
+    }
+    try {
+        Invoke-SpinnerJob -Label "Downloading $ArchiveName" -Action $download -Arguments @($Url, $ZipFile, "$BaseUrl/SHA256SUMS") | Out-Null
+        Move-Item -Path "$ZipFile.SHA256SUMS" -Destination $ChecksumFile -Force -ErrorAction SilentlyContinue
+        try { Unblock-File -Path $ZipFile -ErrorAction SilentlyContinue } catch {}
+        Complete-Step "Downloaded $ArchiveName"
+    } catch {
+        Fail-Step "Download failed" "$_"
+        throw
+    }
 
-    Write-Step "[3/4] Verifying SHA256 checksum..."
+    Start-Step -Index 3 -Label "Verifying SHA256 checksum"
     $ChecksumLine = Get-Content $ChecksumFile | Where-Object { $_ -match "\s+$([regex]::Escape($ArchiveName))$" } | Select-Object -First 1
     if (-not $ChecksumLine) {
+        Fail-Step "Verification failed" "SHA256SUMS has no entry for $ArchiveName"
         throw "Release checksum is missing for $ArchiveName."
     }
     $ExpectedHash = ($ChecksumLine -split "\s+")[0].Trim().ToUpper()
     $ActualHash = (Get-FileHash -Path $ZipFile -Algorithm SHA256).Hash.Trim().ToUpper()
     if ($ActualHash -ne $ExpectedHash) {
+        Fail-Step "Verification failed" "expected $ExpectedHash, got $ActualHash"
         throw "Checksum verification failed."
     }
-    Write-Success "[3/4] Cryptographic checksum verified"
+    Complete-Step "Checksum verified against SHA256SUMS"
 
-    Write-Step "[4/4] Installing binary to $EffectiveInstallDir..."
+    Start-Step -Index 4 -Label "Installing to $EffectiveInstallDir"
     if (-not (Test-Path $EffectiveInstallDir)) {
         New-Item -ItemType Directory -Force -Path $EffectiveInstallDir | Out-Null
     }
@@ -359,7 +644,7 @@ try {
     } catch {
         Write-Warn "Verification note: $_"
     }
-    Write-Success "[4/4] Binary installed to $ExePath"
+    Complete-Step "Installed $ExePath"
 } catch {
     Remove-Item $TempDir -Recurse -Force -ErrorAction SilentlyContinue
     Write-Err "Installation failed: $_"
@@ -378,42 +663,94 @@ if (-not $NoModifyPath) {
     }
 }
 
+Start-Step -Index 5 -Label "Checking for a media player"
 $PlayerDetected = ""
 if ((Get-Command "mpv" -ErrorAction SilentlyContinue) -or (Test-Path "C:\Program Files\mpv\mpv.exe") -or (Test-Path "C:\Program Files\MPV Player\mpv.exe") -or (Test-Path "C:\mpv\mpv.exe") -or (Test-Path "$env:LOCALAPPDATA\Programs\mpv\mpv.exe")) {
     $PlayerDetected = "mpv"
 } elseif ((Get-Command "vlc" -ErrorAction SilentlyContinue) -or (Test-Path "C:\Program Files\VideoLAN\VLC\vlc.exe") -or (Test-Path "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe") -or (Test-Path "$env:LOCALAPPDATA\Programs\VLC\vlc.exe")) {
     $PlayerDetected = "VLC"
 }
-
-Write-Host ""
-Write-Host "  + NEXFLEX $TargetVersion successfully installed!" -ForegroundColor Green
-Write-Host ""
-Write-Host "  - Binary:  " -ForegroundColor DarkGray -NoNewline
-Write-Host $ExePath -ForegroundColor White
-
 if ($PlayerDetected) {
-    Write-Host "  - Player:  " -ForegroundColor DarkGray -NoNewline
-    Write-Host "$PlayerDetected (ready)" -ForegroundColor Green
+    Complete-Step "Player ready: $PlayerDetected"
 } else {
-    Write-Host "  - Player:  " -ForegroundColor DarkGray -NoNewline
-    Write-Host "None detected (mpv or VLC recommended)" -ForegroundColor Cyan
+    Complete-Step "No player found yet (mpv recommended)"
 }
 
-if ($PathModified) {
-    Write-Host "  - Shell:   " -ForegroundColor DarkGray -NoNewline
-    Write-Host "PATH updated in User Environment" -ForegroundColor Magenta
+# Optional mpv install - only with consent.
+if (-not $PlayerDetected -and $script:IsTTY) {
+    $MpvCommand = ""
+    if (Get-Command scoop -ErrorAction SilentlyContinue) {
+        $MpvCommand = "scoop install mpv"
+    } elseif (Get-Command winget -ErrorAction SilentlyContinue) {
+        $MpvCommand = "winget install --id shinchiro.mpv --silent --accept-package-agreements --accept-source-agreements"
+    }
+    if ($MpvCommand) {
+        $Answer = "n"
+        if ($Yes) {
+            $Answer = "y"
+        } else {
+            $Answer = Read-Host "  $($script:InfoMark) mpv was not found. Install it now with '$MpvCommand'? [y/N]"
+        }
+        if ($Answer -match "^(y|yes)$") {
+            try {
+                $mpvJob = {
+                    param($cmd)
+                    $ProgressPreference = "SilentlyContinue"
+                    Invoke-Expression $cmd
+                }
+                Invoke-SpinnerJob -Label "Installing mpv" -Action $mpvJob -Arguments @($MpvCommand) | Out-Null
+                if (Get-Command mpv -ErrorAction SilentlyContinue) {
+                    $PlayerDetected = "mpv"
+                    Complete-Step "mpv installed"
+                } else {
+                    Write-Warn "mpv was not installed; install it later with: $MpvCommand"
+                }
+            } catch {
+                Write-Warn "mpv was not installed; install it later with: $MpvCommand"
+            }
+        }
+    }
 }
+
+# ---------------------------------------------------------------------------
+# NOW SHOWING
+# ---------------------------------------------------------------------------
+$Cols = Get-TerminalCols
+$Inner = 46
+$Pad = [Math]::Max(0, [int][Math]::Floor(($Cols - $Inner - 2) / 2))
+$Lead = " " * $Pad
+$Rule = "-" * $Inner
 
 Write-Host ""
-Write-Host "  To start streaming:" -ForegroundColor White
-Write-Host "    nexflex" -ForegroundColor Green
+if ($script:Unicode) {
+    Write-Host "$Lead$($C.Mauve)$([char]0x2554)$([char]0x2550)$Rule$([char]0x2557)$($C.Reset)"
+    Write-Host "$Lead$($C.Mauve)$([char]0x2551)$($C.Reset)  $($C.Bold)$($C.Yellow)NOW SHOWING$($C.Reset)"
+    Write-Host "$Lead$($C.Mauve)$([char]0x255F)$Rule$([char]0x2562)$($C.Reset)"
+    Write-Host "$Lead$($C.Mauve)$([char]0x2551)$($C.Reset)  $($C.Text)$AppName $TargetVersion$($C.Reset)"
+    Write-Host "$Lead$($C.Mauve)$([char]0x2551)$($C.Reset)  $($C.Subtext)$ExePath$($C.Reset)"
+    if ($PlayerDetected) {
+        Write-Host "$Lead$($C.Mauve)$([char]0x2551)$($C.Reset)  $($C.Subtext)Player: $PlayerDetected$($C.Reset)"
+    }
+    Write-Host "$Lead$($C.Mauve)$([char]0x255F)$Rule$([char]0x2562)$($C.Reset)"
+    Write-Host "$Lead$($C.Mauve)$([char]0x2551)$($C.Reset)  $($C.Green)Run: nexflex$($C.Reset)"
+    Write-Host "$Lead$($C.Mauve)$([char]0x2551)$($C.Reset)  $($C.Subtext)by $Creator$($C.Reset)"
+    Write-Host "$Lead$($C.Mauve)$([char]0x255A)$([char]0x2550)$Rule$([char]0x255D)$($C.Reset)"
+} else {
+    Write-Host "$Lead+$Rule+"
+    Write-Host "$Lead|  NOW SHOWING"
+    Write-Host "$Lead|  $AppName $TargetVersion"
+    Write-Host "$Lead|  $ExePath"
+    if ($PlayerDetected) { Write-Host "$Lead|  Player: $PlayerDetected" }
+    Write-Host "$Lead|  Run: nexflex"
+    Write-Host "$Lead|  by $Creator"
+    Write-Host "$Lead+$Rule+"
+}
 Write-Host ""
 
-if (-not $PlayerDetected) {
-    Write-Host "  [i] Note: A media player (mpv or VLC) is recommended for video playback.`n" -ForegroundColor Cyan
+if ($PathModified) {
+    Write-Host "  $($script:InfoMark) In existing terminal windows, restart the window or run:" -ForegroundColor Cyan
+    Write-Host "      & `"$ExePath`"" -ForegroundColor White
+    Write-Host ""
 }
 
-if ($PathModified) {
-    Write-Host "  [i] In existing terminal windows, restart the window or run:" -ForegroundColor Cyan
-    Write-Host "      & `"$ExePath`"`n" -ForegroundColor White
-}
+Restore-Cursor

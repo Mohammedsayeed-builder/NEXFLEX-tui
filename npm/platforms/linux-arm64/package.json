@@ -1,0 +1,17 @@
+{
+  "name": "@nexflex/linux-arm64",
+  "version": "0.1.30",
+  "description": "Prebuilt NEXFLEX binary for linux arm64",
+  "license": "MIT OR Apache-2.0",
+  "author": "Mohammed Sayeed",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "files": [
+    "bin/"
+  ],
+  "preferUnplugged": true
+}

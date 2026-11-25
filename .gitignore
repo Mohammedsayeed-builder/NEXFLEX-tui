@@ -21,4 +21,9 @@ debug_*.json
 dist/
 book/
 docs/changelog.md
-docs/contributing.md
+docs/contributing.mdnode_modules
+
+# npm packaging artifacts
+npm/artifacts/
+npm/platforms/*/bin/nexflex
+npm/platforms/*/bin/nexflex.exe

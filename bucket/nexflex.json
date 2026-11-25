@@ -1,6 +1,6 @@
 {
   "version": "0.1.30",
-  "description": "Terminal interface to find, download, and stream movies, TV shows, and live TV",
+  "description": "NEXFLEX - terminal app for finding, streaming and downloading media. Created by Mohammed Sayeed.",
   "homepage": "https://github.com/mesamirh/MovieBox-Tui",
   "license": "MIT|Apache-2.0",
   "suggest": {

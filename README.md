@@ -4,6 +4,8 @@
 
 **Terminal interface to find, download, and stream movies, TV shows, and live TV using local media players.**
 
+Created by Mohammed Sayeed. Based on [MovieBox-TUI](https://github.com/mesamirh/MovieBox-Tui) by mesamirh.
+
 [ English ](README.md) • [ বাংলা ](README_BN.md) • [ हिन्दी ](README_HI.md) • [ Español ](README_ES.md)
 
 [![CI](https://img.shields.io/github/actions/workflow/status/mesamirh/MovieBox-Tui/ci.yml?branch=main&label=CI&logo=github&style=flat)](https://github.com/mesamirh/MovieBox-Tui/actions/workflows/ci.yml)
@@ -49,6 +51,22 @@ Direct install via Terminal (macOS & Linux, no package manager needed):
 ```bash
 curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.sh | bash
 ```
+
+The installer shows an animated banner and a film-strip progress bar, verifies the
+SHA256 checksum before writing anything, offers to install mpv with your consent, and
+ends on a "NOW SHOWING" screen. It falls back to plain output when piped, in CI, when
+`NO_COLOR` is set or with `--no-animation`. Other flags: `--version <tag>`,
+`--dir <path>`, `--force`, `--dry-run`, `--no-modify-path`, `--yes`, `--uninstall`.
+
+### npm (all platforms with a prebuilt binary)
+
+```bash
+npm install -g nexflex
+npx nexflex
+```
+
+The npm package is a small launcher that pulls the matching prebuilt binary
+(`@nexflex/linux-x64`, `-linux-arm64`, `-darwin-x64`, `-darwin-arm64`, `-win32-x64`).
 
 ### Windows
 

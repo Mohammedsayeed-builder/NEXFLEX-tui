@@ -1,0 +1,131 @@
+name: npm publish
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to publish (e.g. 0.1.30)
+        required: true
+
+permissions:
+  contents: read
+  id-token: write # required for npm publish --provenance
+
+jobs:
+  artifacts:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            asset: NEXFLEX_Linux_x64.tar.gz
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-latest
+            asset: NEXFLEX_Linux_arm64.tar.gz
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            asset: NEXFLEX_Windows_x64.zip
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Install cross
+        if: matrix.os == 'ubuntu-latest'
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cross
+      - name: Build (linux)
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS: "-C link-arg=-Wl,-z,max-page-size=65536"
+        run: cross build --release --locked --target ${{ matrix.target }}
+      - name: Build (windows)
+        if: matrix.os == 'windows-latest'
+        run: cargo build --release --locked --target ${{ matrix.target }}
+      - name: Package
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          mkdir -p dist
+          cp target/${{ matrix.target }}/release/nexflex dist/
+          tar -czvf ${{ matrix.asset }} -C dist .
+      - name: Package (windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item "target\${{ matrix.target }}\release\nexflex.exe" "dist\"
+          Compress-Archive -Path dist\* -DestinationPath ${{ matrix.asset }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-${{ matrix.target }}
+          path: ${{ matrix.asset }}
+
+  darwin:
+    name: Build macOS universal
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin,aarch64-apple-darwin
+      - run: |
+          cargo build --release --locked --target x86_64-apple-darwin
+          cargo build --release --locked --target aarch64-apple-darwin
+          mkdir -p dist
+          lipo -create -output dist/nexflex \
+            target/x86_64-apple-darwin/release/nexflex \
+            target/aarch64-apple-darwin/release/nexflex
+          tar -czvf NEXFLEX_macOS_Universal.tar.gz -C dist .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-universal-apple-darwin
+          path: NEXFLEX_macOS_Universal.tar.gz
+
+  publish:
+    name: Publish to npm
+    needs: [artifacts, darwin]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+      - uses: actions/download-artifact@v4
+        with:
+          path: npm/artifacts
+          merge-multiple: true
+      - name: Determine version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "value=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=$(grep '^version =' Cargo.toml | head -1 | awk -F'"' '{print $2}')" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Prepare platform packages
+        run: node npm/scripts/prepare-platforms.mjs npm/artifacts "${{ steps.version.outputs.value }}"
+      - name: Publish platform packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          for dir in npm/platforms/*/; do
+            echo "publishing $dir"
+            (cd "$dir" && npm publish --access public --provenance)
+          done
+      - name: Publish launcher
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd npm
+          npm publish --access public --provenance
