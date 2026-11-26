@@ -1,18 +1,18 @@
 {
   "version": "0.1.30",
   "description": "NEXFLEX - terminal app for finding, streaming and downloading media. Created by Mohammed Sayeed.",
-  "homepage": "https://github.com/mesamirh/MovieBox-Tui",
+  "homepage": "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui",
   "license": "MIT|Apache-2.0",
   "suggest": {
     "mpv": "extras/mpv"
   },
   "architecture": {
     "64bit": {
-      "url": "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.30/NEXFLEX_Windows_x64.zip",
+      "url": "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.30/NEXFLEX_Windows_x64.zip",
       "hash": "7c705917868cc4cde56d36529182a38e522f589affa25431ccdefa830d9a4d2a"
     },
     "arm64": {
-      "url": "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.30/NEXFLEX_Windows_arm64.zip",
+      "url": "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.30/NEXFLEX_Windows_arm64.zip",
       "hash": "c96bf6aec5697bddc45bc661c3532490a715c0f35694f0e591ca85fd00c8ef40"
     }
   },
@@ -21,10 +21,10 @@
   "autoupdate": {
     "architecture": {
       "64bit": {
-        "url": "https://github.com/mesamirh/MovieBox-Tui/releases/download/v$version/NEXFLEX_Windows_x64.zip"
+        "url": "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v$version/NEXFLEX_Windows_x64.zip"
       },
       "arm64": {
-        "url": "https://github.com/mesamirh/MovieBox-Tui/releases/download/v$version/NEXFLEX_Windows_arm64.zip"
+        "url": "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v$version/NEXFLEX_Windows_arm64.zip"
       }
     },
     "hash": {

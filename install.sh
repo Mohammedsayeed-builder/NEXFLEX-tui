@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # NEXFLEX installer — Linux (x86_64/aarch64), macOS, Termux.
 #
-#   curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash
 #   ./install.sh [OPTIONS]
 #
 # Created by Mohammed Sayeed. Based on MovieBox-TUI by mesamirh.
@@ -9,7 +9,7 @@ set -euo pipefail
 
 APP_NAME="NEXFLEX"
 BIN_NAME="nexflex"
-REPO="mesamirh/MovieBox-Tui"
+REPO="Mohammedsayeed-builder/NEXFLEX-tui"
 CREATOR="Mohammed Sayeed"
 DEFAULT_INSTALL_DIR="${NEXFLEX_INSTALL_DIR:-$HOME/.local/bin}"
 
@@ -660,6 +660,8 @@ if [ "$DRY_RUN" -eq 1 ]; then
     printf "  %bDry run%b — nothing was written.\n\n" "$C_BOLD" "$C_RESET"
     printf "  Package:      %s\n" "$FILE"
     printf "  Version:      %s\n" "$TARGET_VERSION"
+    printf "  Source:       %s\n" "$URL"
+    printf "  Checksums:    %s\n" "$CHECKSUM_URL"
     printf "  Install path: %s\n\n" "$APP_PATH"
     exit 0
 fi

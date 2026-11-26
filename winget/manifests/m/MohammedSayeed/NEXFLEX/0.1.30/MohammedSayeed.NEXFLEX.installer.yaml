@@ -10,10 +10,10 @@ NestedInstallerFiles:
     PortableCommandAlias: nexflex
 Installers:
   - Architecture: x64
-    InstallerUrl: https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.30/NEXFLEX_Windows_x64.zip
+    InstallerUrl: https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.30/NEXFLEX_Windows_x64.zip
     InstallerSha256: 7C705917868CC4CDE56D36529182A38E522F589AFFA25431CCDEFA830D9A4D2A
   - Architecture: arm64
-    InstallerUrl: https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.30/NEXFLEX_Windows_arm64.zip
+    InstallerUrl: https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.30/NEXFLEX_Windows_arm64.zip
     InstallerSha256: C96BF6AEC5697BDDC45BC661C3532490A715C0F35694F0E591CA85FD00C8EF40
 ManifestType: installer
 ManifestVersion: 1.6.0

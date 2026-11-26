@@ -8,7 +8,7 @@ Created by Mohammed Sayeed. Based on [MovieBox-TUI](https://github.com/mesamirh/
 
 [ English ](README.md) • [ বাংলা ](README_BN.md) • [ हिन्दी ](README_HI.md) • [ Español ](README_ES.md)
 
-[![CI](https://img.shields.io/github/actions/workflow/status/mesamirh/MovieBox-Tui/ci.yml?branch=main&label=CI&logo=github&style=flat)](https://github.com/mesamirh/MovieBox-Tui/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/Mohammedsayeed-builder/NEXFLEX-tui/ci.yml?branch=main&label=CI&logo=github&style=flat)](https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/actions/workflows/ci.yml)
 [![crates.io](https://img.shields.io/crates/v/nexflex.svg?logo=rust&style=flat)](https://crates.io/crates/nexflex)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg?style=flat)](#license)
 [![Telegram](https://img.shields.io/badge/Telegram-Channel-2CA5E0?style=flat&logo=telegram&logoColor=white)](https://t.me/getfromme)
@@ -37,19 +37,23 @@ Created by Mohammed Sayeed. Based on [MovieBox-TUI](https://github.com/mesamirh/
 
 ## Installation
 
+> **Before the first release:** the Homebrew tap, the Scoop bucket and the npm package are
+> published from this repository, so they only work once a GitHub release exists. Until then
+> use the direct installer (`install.sh` / `install.ps1`) or build from source.
+
 ### macOS & Linux
 
 If you have [Homebrew](https://brew.sh/) on macOS:
 ```bash
-brew tap mesamirh/moviebox-tui https://github.com/mesamirh/MovieBox-Tui
+brew tap Mohammedsayeed-builder/nexflex-tui https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
 brew install nexflex
 ```
 
-> **Note:** If Homebrew prompts for tap verification on initial install, run `brew trust mesamirh/moviebox-tui`.
+> **Note:** If Homebrew prompts for tap verification on initial install, run `brew trust Mohammedsayeed-builder/nexflex-tui`.
 
 Direct install via Terminal (macOS & Linux, no package manager needed):
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash
 ```
 
 The installer shows an animated banner and a film-strip progress bar, verifies the
@@ -72,13 +76,13 @@ The npm package is a small launcher that pulls the matching prebuilt binary
 
 If you have [Scoop](https://scoop.sh/) (recommended):
 ```powershell
-scoop bucket add moviebox https://github.com/mesamirh/MovieBox-Tui
+scoop bucket add nexflex https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
 scoop install nexflex
 ```
 
 Direct install via PowerShell (no package manager needed):
 ```powershell
-irm https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.ps1 | iex
 ```
 
 > **SmartScreen prompt:** If Windows displays *"Windows protected your PC"*, click **More info** → **Run anyway**.
@@ -86,7 +90,7 @@ irm https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.ps1 | i
 ### Android (Termux)
 ```bash
 pkg update && pkg install -y curl tar termux-tools termux-am
-curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash
 termux-setup-storage
 ```
 
@@ -99,7 +103,7 @@ cargo install nexflex --locked
 
 From source:
 ```bash
-git clone https://github.com/mesamirh/MovieBox-Tui.git
+git clone https://github.com/Mohammedsayeed-builder/NEXFLEX-tui.git
 cd NEXFLEX
 cargo build --release --locked
 ```
@@ -111,7 +115,7 @@ cargo build --release --locked
 
 ```bash
 sha256sum -c SHA256SUMS --ignore-missing
-gh attestation verify <archive-file> -R mesamirh/MovieBox-Tui
+gh attestation verify <archive-file> -R Mohammedsayeed-builder/NEXFLEX-tui
 ```
 
 </details>
@@ -141,7 +145,7 @@ nexflex
 
 ## Documentation
 
-Full documentation at [**mesamirh.github.io/MovieBox-Tui**](https://mesamirh.github.io/MovieBox-Tui/) or [`docs/`](docs/):
+Full documentation at [**docs/**](docs/) or [`docs/`](docs/):
 
 | Guide | Description |
 | :--- | :--- |
@@ -155,7 +159,7 @@ Full documentation at [**mesamirh.github.io/MovieBox-Tui**](https://mesamirh.git
 
 ## Contributing
 
-Review [CONTRIBUTING.md](CONTRIBUTING.md) before submitting pull requests. Report bugs via [GitHub Issues](https://github.com/mesamirh/MovieBox-Tui/issues).
+Review [CONTRIBUTING.md](CONTRIBUTING.md) before submitting pull requests. Report bugs via [GitHub Issues](https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/issues).
 
 <details>
 <summary><b>Support</b></summary>

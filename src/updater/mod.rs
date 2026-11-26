@@ -153,32 +153,32 @@ mod tests {
             assets: vec![
                 ReleaseAsset {
                     name: "NEXFLEX_macOS_Universal.tar.gz".to_string(),
-                    download_url: "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.13/NEXFLEX_macOS_Universal.tar.gz".to_string(),
+                    download_url: "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.13/NEXFLEX_macOS_Universal.tar.gz".to_string(),
                     size: Some(15_000_000),
                 },
                 ReleaseAsset {
                     name: "NEXFLEX_Linux_x64.tar.gz".to_string(),
-                    download_url: "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.13/NEXFLEX_Linux_x64.tar.gz".to_string(),
+                    download_url: "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.13/NEXFLEX_Linux_x64.tar.gz".to_string(),
                     size: Some(12_000_000),
                 },
                 ReleaseAsset {
                     name: "NEXFLEX_Linux_arm64.tar.gz".to_string(),
-                    download_url: "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.13/NEXFLEX_Linux_arm64.tar.gz".to_string(),
+                    download_url: "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.13/NEXFLEX_Linux_arm64.tar.gz".to_string(),
                     size: Some(11_500_000),
                 },
                 ReleaseAsset {
                     name: "NEXFLEX_Windows_x64.zip".to_string(),
-                    download_url: "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.13/NEXFLEX_Windows_x64.zip".to_string(),
+                    download_url: "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.13/NEXFLEX_Windows_x64.zip".to_string(),
                     size: Some(13_000_000),
                 },
                 ReleaseAsset {
                     name: "NEXFLEX_Windows_arm64.zip".to_string(),
-                    download_url: "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.13/NEXFLEX_Windows_arm64.zip".to_string(),
+                    download_url: "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.13/NEXFLEX_Windows_arm64.zip".to_string(),
                     size: Some(12_500_000),
                 },
                 ReleaseAsset {
                     name: "SHA256SUMS".to_string(),
-                    download_url: "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.13/SHA256SUMS".to_string(),
+                    download_url: "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.13/SHA256SUMS".to_string(),
                     size: Some(512),
                 },
             ],

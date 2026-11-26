@@ -393,7 +393,7 @@
 
 ### Added
 - **Automated Issue Quality, Version Validation, and Duplicate Management**:
-  - Modernized GitHub issue templates (`.github/ISSUE_TEMPLATE/`) to link directly to official mdBook documentation site guides (`mesamirh.github.io/MovieBox-Tui/`).
+  - Modernized GitHub issue templates (`.github/ISSUE_TEMPLATE/`) to link directly to the bundled mdBook documentation (`docs/`).
   - Added `.github/workflows/incomplete-issue.yml` with semver release validation checking user versions against latest GitHub releases and printing platform upgrade commands.
   - Implemented automated OS labeling (`os: android`, `os: linux`, `os: macos`, `os: windows`), title sanity validation, and Termux player setup guidance.
   - Added automatic removal of `needs-info` and `stale` labels when the issue author provides responses.

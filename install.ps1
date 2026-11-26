@@ -22,7 +22,7 @@ Set-StrictMode -Version Latest
 
 $AppName = "NEXFLEX"
 $BinName = "nexflex.exe"
-$Repo = "mesamirh/MovieBox-Tui"
+$Repo = "Mohammedsayeed-builder/NEXFLEX-tui"
 $Creator = "Mohammed Sayeed"
 $DefaultInstallDir = Join-Path $env:LOCALAPPDATA "Programs\NEXFLEX\bin"
 
@@ -184,7 +184,7 @@ if ($Help) {
 NEXFLEX Installer (Windows PowerShell)
 
 USAGE:
-    irm https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.ps1 | iex
+    irm https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.ps1 | iex
     .\install.ps1 [OPTIONS]
 
 OPTIONS:
@@ -561,7 +561,9 @@ if (Test-Path $ExePath) {
 if ($DryRun) {
     Start-Step -Index 1 -Label "Detecting platform"
     Complete-Step "Target package: $ArchiveName"
+    $DryBase = if ($env:NEXFLEX_RELEASE_URL) { $env:NEXFLEX_RELEASE_URL.TrimEnd("/") } else { "https://github.com/$Repo/releases/download/$TargetVersion" }
     Write-Host "  Dry run - nothing was written."
+    Write-Host "  Source: $DryBase/$ArchiveName"
     Write-Host "  Install path: $ExePath"
     Write-Host ""
     return

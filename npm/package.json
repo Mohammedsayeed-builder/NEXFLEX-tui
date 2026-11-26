@@ -10,16 +10,13 @@
     "media-player",
     "nexflex"
   ],
-  "homepage": "https://github.com/mesamirh/MovieBox-Tui",
+  "homepage": "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mesamirh/MovieBox-Tui.git"
+    "url": "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui.git"
   },
   "license": "MIT OR Apache-2.0",
   "author": "Mohammed Sayeed",
-  "contributors": [
-    "mesamirh (MovieBox-TUI)"
-  ],
   "bin": {
     "nexflex": "bin/nexflex.js"
   },
@@ -40,5 +37,8 @@
   },
   "scripts": {
     "prepack": "node scripts/check-platforms.mjs"
+  },
+  "bugs": {
+    "url": "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/issues"
   }
 }

@@ -129,7 +129,7 @@ function missingPlatform(label, version) {
     console.error(`  Supported platforms: ${supported}`);
     console.error("");
     console.error("  Install another way:");
-    console.error(`    ${C.bold}curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.sh | bash${C.reset}`);
+    console.error(`    ${C.bold}curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash${C.reset}`);
     console.error(`    ${C.bold}cargo install nexflex --locked${C.reset}`);
     console.error("");
 }

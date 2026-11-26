@@ -81,7 +81,7 @@ impl Release {
             return Some(ReleaseAsset {
                 name: expected.to_string(),
                 download_url: format!(
-                    "https://github.com/mesamirh/MovieBox-Tui/releases/download/{}/{expected}",
+                    "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/{}/{expected}",
                     self.tag_name
                 ),
                 size: None,
@@ -98,7 +98,7 @@ impl Release {
             return Some(ReleaseAsset {
                 name: "SHA256SUMS".to_string(),
                 download_url: format!(
-                    "https://github.com/mesamirh/MovieBox-Tui/releases/download/{}/SHA256SUMS",
+                    "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/{}/SHA256SUMS",
                     self.tag_name
                 ),
                 size: None,
@@ -133,7 +133,7 @@ mod tests {
         assert_eq!(linux_asset.name, "NEXFLEX_Linux_x64.tar.gz");
         assert_eq!(
             linux_asset.download_url,
-            "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.16/NEXFLEX_Linux_x64.tar.gz"
+            "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.16/NEXFLEX_Linux_x64.tar.gz"
         );
 
         let mac_asset = empty_assets_release
@@ -142,7 +142,7 @@ mod tests {
         assert_eq!(mac_asset.name, "NEXFLEX_macOS_Universal.tar.gz");
         assert_eq!(
             mac_asset.download_url,
-            "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.16/NEXFLEX_macOS_Universal.tar.gz"
+            "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.16/NEXFLEX_macOS_Universal.tar.gz"
         );
 
         let checksum = empty_assets_release
@@ -151,7 +151,7 @@ mod tests {
         assert_eq!(checksum.name, "SHA256SUMS");
         assert_eq!(
             checksum.download_url,
-            "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.16/SHA256SUMS"
+            "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.16/SHA256SUMS"
         );
     }
 

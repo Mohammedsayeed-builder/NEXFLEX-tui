@@ -596,7 +596,7 @@ impl App {
                             );
                         }
                         4 => {
-                            const REPO_URL: &str = "https://github.com/mesamirh/MovieBox-Tui";
+                            const REPO_URL: &str = "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui";
                             match crate::net::open_external_url(REPO_URL) {
                                 Ok(()) => {
                                     self.state.notify(

@@ -11,19 +11,19 @@ NEXFLEX is available across macOS, Linux, Windows, and Android (Termux).
 If you have [Homebrew](https://brew.sh/):
 
 ```bash
-brew tap mesamirh/moviebox-tui https://github.com/mesamirh/MovieBox-Tui
+brew tap Mohammedsayeed-builder/nexflex-tui https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
 brew install nexflex
 ```
 
 > [!NOTE]
-> If Homebrew prompts for tap verification on initial install, run `brew trust mesamirh/moviebox-tui`.
+> If Homebrew prompts for tap verification on initial install, run `brew trust Mohammedsayeed-builder/nexflex-tui`.
 
 ### Direct Terminal Script
 
 No package manager required. Open Terminal and run:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash
 ```
 
 ---
@@ -35,7 +35,7 @@ curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.
 If you have [Scoop](https://scoop.sh/):
 
 ```powershell
-scoop bucket add moviebox https://github.com/mesamirh/MovieBox-Tui
+scoop bucket add nexflex https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
 scoop install nexflex
 ```
 
@@ -44,7 +44,7 @@ scoop install nexflex
 No package manager required. Open **PowerShell** and run:
 
 ```powershell
-irm https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.ps1 | iex
 ```
 
 > **SmartScreen prompt:** If Windows displays *"Windows protected your PC"*, click **More info** → **Run anyway**.
@@ -56,7 +56,7 @@ Open Termux and run:
 
 ```bash
 pkg update && pkg install -y curl tar termux-tools termux-am
-curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash
 termux-setup-storage
 ```
 
@@ -79,7 +79,7 @@ cargo install nexflex --locked
 Clone the repository and build the release binary:
 
 ```bash
-git clone https://github.com/mesamirh/MovieBox-Tui.git
+git clone https://github.com/Mohammedsayeed-builder/NEXFLEX-tui.git
 cd NEXFLEX
 cargo build --release --locked
 ```
@@ -94,7 +94,7 @@ All release assets include cryptographically signed SHA-256 checksums and GitHub
 
 ```bash
 sha256sum -c SHA256SUMS --ignore-missing
-gh attestation verify <archive-file> -R mesamirh/MovieBox-Tui
+gh attestation verify <archive-file> -R Mohammedsayeed-builder/NEXFLEX-tui
 ```
 ---
 

@@ -6,7 +6,7 @@
 
 [ English ](README.md) • [ বাংলা ](README_BN.md) • [ हिन्दी ](README_HI.md) • [ Español ](README_ES.md)
 
-[![CI](https://img.shields.io/github/actions/workflow/status/mesamirh/MovieBox-Tui/ci.yml?branch=main&label=CI&logo=github&style=flat)](https://github.com/mesamirh/MovieBox-Tui/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/Mohammedsayeed-builder/NEXFLEX-tui/ci.yml?branch=main&label=CI&logo=github&style=flat)](https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/actions/workflows/ci.yml)
 [![crates.io](https://img.shields.io/crates/v/nexflex.svg?logo=rust&style=flat)](https://crates.io/crates/nexflex)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg?style=flat)](#licencia)
 [![Telegram](https://img.shields.io/badge/Telegram-Channel-2CA5E0?style=flat&logo=telegram&logoColor=white)](https://t.me/getfromme)
@@ -39,28 +39,28 @@
 
 Si tienes [Homebrew](https://brew.sh/) en macOS:
 ```bash
-brew tap mesamirh/moviebox-tui https://github.com/mesamirh/MovieBox-Tui
+brew tap Mohammedsayeed-builder/nexflex-tui https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
 brew install nexflex
 ```
 
-> **Nota:** Si Homebrew solicita verificación de tap en la instalación inicial, ejecuta `brew trust mesamirh/moviebox-tui`.
+> **Nota:** Si Homebrew solicita verificación de tap en la instalación inicial, ejecuta `brew trust Mohammedsayeed-builder/nexflex-tui`.
 
 Instalación directa mediante Terminal (macOS y Linux, sin necesidad de gestor de paquetes):
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash
 ```
 
 ### Windows
 
 Si tienes [Scoop](https://scoop.sh/) (recomendado):
 ```powershell
-scoop bucket add moviebox https://github.com/mesamirh/MovieBox-Tui
+scoop bucket add nexflex https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
 scoop install nexflex
 ```
 
 Instalación directa mediante PowerShell (sin necesidad de gestor de paquetes):
 ```powershell
-irm https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.ps1 | iex
 ```
 
 > **Aviso de SmartScreen:** Si Windows muestra *"Windows protegió su PC"*, haz clic en **Más información** → **Ejecutar de todas formas**.
@@ -70,7 +70,7 @@ irm https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.ps1 | i
 Abre Termux y ejecuta:
 ```bash
 pkg update && pkg install -y curl tar termux-tools termux-am
-curl -fsSL https://raw.githubusercontent.com/mesamirh/MovieBox-Tui/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash
 termux-setup-storage
 ```
 > [!IMPORTANT]
@@ -86,7 +86,7 @@ cargo install nexflex --locked
 
 Compilar desde el código fuente:
 ```bash
-git clone https://github.com/mesamirh/MovieBox-Tui.git
+git clone https://github.com/Mohammedsayeed-builder/NEXFLEX-tui.git
 cd NEXFLEX
 cargo build --release --locked
 ```
@@ -98,7 +98,7 @@ cargo build --release --locked
 
 ```bash
 sha256sum -c SHA256SUMS --ignore-missing
-gh attestation verify <archive-file> -R mesamirh/MovieBox-Tui
+gh attestation verify <archive-file> -R Mohammedsayeed-builder/NEXFLEX-tui
 ```
 
 </details>
@@ -128,7 +128,7 @@ nexflex
 
 ## Documentación
 
-Las guías completas y referencias de arquitectura están disponibles en [**mesamirh.github.io/MovieBox-Tui**](https://mesamirh.github.io/MovieBox-Tui/) o en el directorio [`docs/`](docs/):
+Las guías completas y referencias de arquitectura están disponibles en [**docs/**](docs/) o en el directorio [`docs/`](docs/):
 
 | Guía | Descripción |
 | :--- | :--- |
@@ -144,7 +144,7 @@ Las guías completas y referencias de arquitectura están disponibles en [**mesa
 
 Cualquier contribución es bienvenida. Revisa [CONTRIBUTING.md](CONTRIBUTING.md) antes de enviar pull requests.
 
-Reporta errores o sugiere nuevas funciones a través de [GitHub Issues](https://github.com/mesamirh/MovieBox-Tui/issues).
+Reporta errores o sugiere nuevas funciones a través de [GitHub Issues](https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/issues).
 
 <details>
 <summary><b>Apoyo opcional</b></summary>
