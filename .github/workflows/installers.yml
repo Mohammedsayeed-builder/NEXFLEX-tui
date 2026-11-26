@@ -68,7 +68,7 @@ jobs:
           NEXFLEX_RELEASE_URL="file://$PWD/rel" \
             ./install.sh --version v0.0.0 --dir "$PWD/out" --no-modify-path --yes
           "$PWD/out/nexflex" --version
-          "$PWD/out/nexflex" --version | grep -q "Based on MovieBox-TUI by mesamirh"
+          "$PWD/out/nexflex" --version | grep -q "Created by Mohammed Sayeed"
 
       - name: Install with install.sh (unix, plain / piped)
         if: runner.os != 'Windows'
@@ -149,9 +149,9 @@ jobs:
           # fake platform package + binary, then check the launcher execs it
           os=$(node -p "process.platform"); cpu=$(node -p "process.arch")
           exe=nexflex; [ "$os" = "win32" ] && exe=nexflex.exe
-          mkdir -p "node_modules/@nexflex/$os-$cpu/bin"
-          printf '{"name":"@nexflex/%s-%s","version":"0.0.0"}' "$os" "$cpu" > "node_modules/@nexflex/$os-$cpu/package.json"
-          printf '#!/bin/sh\necho "nexflex 0.0.0"\n' > "node_modules/@nexflex/$os-$cpu/bin/$exe"
-          chmod +x "node_modules/@nexflex/$os-$cpu/bin/$exe"
+          mkdir -p "node_modules/nexflex-tui-$os-$cpu/bin"
+          printf '{"name":"nexflex-tui-%s-%s","version":"0.0.0"}' "$os" "$cpu" > "node_modules/nexflex-tui-$os-$cpu/package.json"
+          printf '#!/bin/sh\necho "nexflex 0.0.0"\n' > "node_modules/nexflex-tui-$os-$cpu/bin/$exe"
+          chmod +x "node_modules/nexflex-tui-$os-$cpu/bin/$exe"
           out=$(HOME="$PWD/fakehome" node npm/bin/nexflex.js --version)
           echo "$out" | grep -q "nexflex 0.0.0"

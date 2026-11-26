@@ -1,6 +1,6 @@
 "use strict";
 
-// Fallback path: when the matching @nexflex/<platform> package was not
+// Fallback path: when the matching nexflex-tui-<platform> package was not
 // installed (npm --omit=optional, a blocked postinstall, or a brand new
 // platform), fetch the release archive from this project's GitHub releases and
 // cache the binary. No dependencies.

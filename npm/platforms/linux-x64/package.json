@@ -1,5 +1,5 @@
 {
-  "name": "@nexflex/linux-x64",
+  "name": "nexflex-tui-linux-x64",
   "version": "0.1.30",
   "description": "Prebuilt NEXFLEX binary for linux x64",
   "license": "MIT OR Apache-2.0",

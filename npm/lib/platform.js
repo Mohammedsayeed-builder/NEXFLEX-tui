@@ -11,7 +11,7 @@ const SUPPORTED = {
 };
 
 function packageName() {
-    return `@nexflex/${process.platform}-${process.arch}`;
+    return `nexflex-tui-${process.platform}-${process.arch}`;
 }
 
 function platformLabel() {

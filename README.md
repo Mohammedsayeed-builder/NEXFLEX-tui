@@ -4,7 +4,7 @@
 
 **Terminal interface to find, download, and stream movies, TV shows, and live TV using local media players.**
 
-Created by Mohammed Sayeed. Based on [MovieBox-TUI](https://github.com/mesamirh/MovieBox-Tui) by mesamirh.
+Created by **Mohammed Sayeed**.
 
 [ English ](README.md) • [ বাংলা ](README_BN.md) • [ हिन्दी ](README_HI.md) • [ Español ](README_ES.md)
 
@@ -46,10 +46,8 @@ Created by Mohammed Sayeed. Based on [MovieBox-TUI](https://github.com/mesamirh/
 If you have [Homebrew](https://brew.sh/) on macOS:
 ```bash
 brew tap Mohammedsayeed-builder/nexflex-tui https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
-brew install nexflex
+brew install nexflex-tui
 ```
-
-> **Note:** If Homebrew prompts for tap verification on initial install, run `brew trust Mohammedsayeed-builder/nexflex-tui`.
 
 Direct install via Terminal (macOS & Linux, no package manager needed):
 ```bash
@@ -65,19 +63,19 @@ ends on a "NOW SHOWING" screen. It falls back to plain output when piped, in CI,
 ### npm (all platforms with a prebuilt binary)
 
 ```bash
-npm install -g nexflex
-npx nexflex
+npm install -g nexflex-tui
+npx nexflex-tui
 ```
 
 The npm package is a small launcher that pulls the matching prebuilt binary
-(`@nexflex/linux-x64`, `-linux-arm64`, `-darwin-x64`, `-darwin-arm64`, `-win32-x64`).
+(`nexflex-tui-linux-x64`, `-linux-arm64`, `-darwin-x64`, `-darwin-arm64`, `-win32-x64`).
 
 ### Windows
 
 If you have [Scoop](https://scoop.sh/) (recommended):
 ```powershell
-scoop bucket add nexflex https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
-scoop install nexflex
+scoop bucket add nexflex-tui https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
+scoop install nexflex-tui
 ```
 
 Direct install via PowerShell (no package manager needed):

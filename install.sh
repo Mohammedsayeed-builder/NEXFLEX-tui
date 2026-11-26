@@ -4,7 +4,7 @@
 #   curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash
 #   ./install.sh [OPTIONS]
 #
-# Created by Mohammed Sayeed. Based on MovieBox-TUI by mesamirh.
+# Created by Mohammed Sayeed.
 set -euo pipefail
 
 APP_NAME="NEXFLEX"
@@ -65,7 +65,7 @@ OPTIONS:
         --no-color         Disable colour
     -h, --help             Show this help message
 
-Created by $CREATOR. Based on MovieBox-TUI by mesamirh.
+Created by $CREATOR.
 EOF
             exit 0 ;;
         *) printf "warning: ignoring unknown argument: %s\n" "$1" >&2; shift ;;
@@ -546,9 +546,8 @@ do_uninstall() {
 
     STEP_CURRENT=3
     local cfg="$HOME/.config/$BIN_NAME" data="$HOME/.local/share/$BIN_NAME" cache="$HOME/.cache/$BIN_NAME"
-    local legacy_cfg="$HOME/.config/moviebox-tui" legacy_data="$HOME/.local/share/moviebox-tui"
     step_begin 3 "Removing configuration"
-    if [ -d "$cfg" ] || [ -d "$data" ] || [ -d "$cache" ] || [ -d "$legacy_cfg" ] || [ -d "$legacy_data" ]; then
+    if [ -d "$cfg" ] || [ -d "$data" ] || [ -d "$cache" ]; then
         rm -rf "$cfg" "$data" "$cache" 2>/dev/null || true
         step_ok "Removed config, data and cache"
     else

@@ -44,7 +44,7 @@ for (const [platform, [archive, exe]] of Object.entries(MAP)) {
     const src = join(artifacts, archive);
     const dest = join(npmRoot, "platforms", platform, "bin", exe);
     if (!existsSync(src)) {
-        console.warn(`prepare-platforms: ${archive} not found, @nexflex/${platform} will ship without a binary`);
+        console.warn(`prepare-platforms: ${archive} not found, nexflex-tui-${platform} will ship without a binary`);
         missing++;
         continue;
     }

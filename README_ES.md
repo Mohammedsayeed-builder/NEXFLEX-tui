@@ -40,10 +40,8 @@
 Si tienes [Homebrew](https://brew.sh/) en macOS:
 ```bash
 brew tap Mohammedsayeed-builder/nexflex-tui https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
-brew install nexflex
+brew install nexflex-tui
 ```
-
-> **Nota:** Si Homebrew solicita verificación de tap en la instalación inicial, ejecuta `brew trust Mohammedsayeed-builder/nexflex-tui`.
 
 Instalación directa mediante Terminal (macOS y Linux, sin necesidad de gestor de paquetes):
 ```bash
@@ -54,8 +52,8 @@ curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/
 
 Si tienes [Scoop](https://scoop.sh/) (recomendado):
 ```powershell
-scoop bucket add nexflex https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
-scoop install nexflex
+scoop bucket add nexflex-tui https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
+scoop install nexflex-tui
 ```
 
 Instalación directa mediante PowerShell (sin necesidad de gestor de paquetes):

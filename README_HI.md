@@ -40,10 +40,8 @@
 यदि आपके पास macOS पर [Homebrew](https://brew.sh/) है:
 ```bash
 brew tap Mohammedsayeed-builder/nexflex-tui https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
-brew install nexflex
+brew install nexflex-tui
 ```
-
-> **नोट:** पहली बार इंस्टॉल करते समय यदि Homebrew वेरिफिकेशन मांगे, तो `brew trust Mohammedsayeed-builder/nexflex-tui` चलाएं।
 
 टर्मिनल से सीधे इंस्टॉल (macOS और Linux, किसी पैकेज मैनेजर की आवश्यकता नहीं):
 ```bash
@@ -54,8 +52,8 @@ curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/
 
 यदि आपके पास [Scoop](https://scoop.sh/) है (अनुशंसित):
 ```powershell
-scoop bucket add nexflex https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
-scoop install nexflex
+scoop bucket add nexflex-tui https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
+scoop install nexflex-tui
 ```
 
 PowerShell स्क्रिप्ट से सीधे इंस्टॉल (किसी पैकेज मैनेजर की आवश्यकता नहीं):

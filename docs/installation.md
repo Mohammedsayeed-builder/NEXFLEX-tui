@@ -12,7 +12,7 @@ If you have [Homebrew](https://brew.sh/):
 
 ```bash
 brew tap Mohammedsayeed-builder/nexflex-tui https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
-brew install nexflex
+brew install nexflex-tui
 ```
 
 > [!NOTE]
@@ -35,8 +35,8 @@ curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/
 If you have [Scoop](https://scoop.sh/):
 
 ```powershell
-scoop bucket add nexflex https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
-scoop install nexflex
+scoop bucket add nexflex-tui https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
+scoop install nexflex-tui
 ```
 
 ### Direct PowerShell Script

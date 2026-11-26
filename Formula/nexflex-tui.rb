@@ -1,4 +1,4 @@
-class Nexflex < Formula
+class NexflexTui < Formula
   VERSION = "0.1.30"
   MACOS_SHA256 = "2b7c2ba5c212b1fc0c554eaf5cddc7937bfed0fe74b2ed5321894b7a76bb5929"
   LINUX_X64_SHA256 = "7aa63669d7c68fbb1b001649edb674d6f543dc1152b57a16afb158ae2f4c6fdf"

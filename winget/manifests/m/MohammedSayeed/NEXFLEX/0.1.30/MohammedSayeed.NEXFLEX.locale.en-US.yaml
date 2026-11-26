@@ -9,7 +9,7 @@ PackageUrl: https://github.com/Mohammedsayeed-builder/NEXFLEX-tui
 License: MIT OR Apache-2.0
 LicenseUrl: https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/blob/main/LICENSE-MIT
 ShortDescription: Terminal app for finding, streaming and downloading media.
-Description: NEXFLEX is a fast, zero-config, telemetry-free terminal app for finding, streaming and downloading movies, TV shows and live TV. Created by Mohammed Sayeed. Based on MovieBox-TUI by mesamirh.
+Description: NEXFLEX is a fast, zero-config, telemetry-free terminal app for finding, streaming and downloading movies, TV shows and live TV. Created by Mohammed Sayeed.
 Moniker: nexflex
 Tags:
   - tui

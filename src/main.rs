@@ -111,7 +111,7 @@ async fn main() -> std::io::Result<()> {
         .any(|arg| arg == "--version" || arg == "-v" || arg == "-V")
     {
         println!("nexflex {}", env!("CARGO_PKG_VERSION"));
-        println!("Created by Mohammed Sayeed. Based on MovieBox-TUI by mesamirh.");
+        println!("Created by Mohammed Sayeed.");
         return Ok(());
     }
 

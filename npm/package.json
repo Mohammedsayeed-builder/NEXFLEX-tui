@@ -1,5 +1,5 @@
 {
-  "name": "nexflex",
+  "name": "nexflex-tui",
   "version": "0.1.30",
   "description": "NEXFLEX - a fast, zero-config, telemetry-free terminal app for finding, streaming and downloading media. Created by Mohammed Sayeed.",
   "keywords": [
@@ -29,11 +29,11 @@
     "node": ">=16"
   },
   "optionalDependencies": {
-    "@nexflex/linux-x64": "0.1.30",
-    "@nexflex/linux-arm64": "0.1.30",
-    "@nexflex/darwin-x64": "0.1.30",
-    "@nexflex/darwin-arm64": "0.1.30",
-    "@nexflex/win32-x64": "0.1.30"
+    "nexflex-tui-linux-x64": "0.1.30",
+    "nexflex-tui-linux-arm64": "0.1.30",
+    "nexflex-tui-darwin-x64": "0.1.30",
+    "nexflex-tui-darwin-arm64": "0.1.30",
+    "nexflex-tui-win32-x64": "0.1.30"
   },
   "scripts": {
     "prepack": "node scripts/check-platforms.mjs"

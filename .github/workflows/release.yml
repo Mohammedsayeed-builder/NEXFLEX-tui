@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "Cargo.toml"
+    tags:
+      - "v*"
   workflow_dispatch:
 
 permissions:
@@ -24,7 +26,12 @@ jobs:
       - name: Get version from Cargo.toml
         id: check
         run: |
-          VERSION=$(grep '^version =' Cargo.toml | head -1 | awk -F'"' '{print $2}')
+          if [ "${GITHUB_REF_TYPE:-branch}" = "tag" ]; then
+            # pushing a v* tag releases that tag, whatever Cargo.toml says
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            VERSION=$(grep '^version =' Cargo.toml | head -1 | awk -F'"' '{print $2}')
+          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
           if gh release view "v$VERSION" --repo "${{ github.repository }}" &>/dev/null; then

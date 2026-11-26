@@ -1,5 +1,5 @@
 {
-  "name": "@nexflex/darwin-x64",
+  "name": "nexflex-tui-darwin-x64",
   "version": "0.1.30",
   "description": "Prebuilt NEXFLEX binary for darwin x64",
   "license": "MIT OR Apache-2.0",

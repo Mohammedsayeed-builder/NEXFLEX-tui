@@ -2,7 +2,7 @@
 "use strict";
 
 // Thin launcher: hand over to the prebuilt binary shipped in the matching
-// @nexflex/<platform>-<arch> package (the esbuild pattern). If that optional
+// nexflex-tui-<platform>-<arch> package (the esbuild pattern). If that optional
 // dependency is missing, fall back to downloading the release archive once.
 const { spawn } = require("child_process");
 const path = require("path");
