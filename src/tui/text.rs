@@ -856,17 +856,17 @@ mod tests {
     }
     #[test]
     fn test_truncate_width_and_simd_ascii_zero_alloc() {
-        let ascii_fit = "MovieBox";
+        let ascii_fit = "NEXFLEX";
         match truncate_width(ascii_fit, 10) {
-            Cow::Borrowed(b) => assert_eq!(b, "MovieBox"),
+            Cow::Borrowed(b) => assert_eq!(b, "NEXFLEX"),
             Cow::Owned(_) => panic!("expected borrowed Cow for fitting ascii string"),
         }
-        let ascii_exact = "MovieBox";
+        let ascii_exact = "NEXFLEX";
         match truncate_width(ascii_exact, 8) {
-            Cow::Borrowed(b) => assert_eq!(b, "MovieBox"),
+            Cow::Borrowed(b) => assert_eq!(b, "NEXFLEX"),
             Cow::Owned(_) => panic!("expected borrowed Cow for exact ascii string"),
         }
-        assert_eq!(truncate_width("NEXFLEX Terminal", 11), "MovieBox...");
+        assert_eq!(truncate_width("NEXFLEX Terminal", 11), "NEXFLEX ...");
         assert_eq!(truncate_width("Short", 3), "...");
         assert_eq!(truncate_width("Short", 2), "..");
         assert_eq!(truncate_width("Short", 1), ".");

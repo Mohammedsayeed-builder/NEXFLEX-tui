@@ -1575,12 +1575,13 @@ mod tests {
 
     #[test]
     fn test_format_mpv_script_opts_windows_paths() {
-        let win_path = PathBuf::from(
-            r"C:\Users\User\AppData\Local\NEXFLEX\playback\moviebox_123_1_1.json",
-        );
+        let win_path =
+            PathBuf::from(r"C:\Users\User\AppData\Local\NEXFLEX\playback\moviebox_123_1_1.json");
         let opts = format_mpv_script_opts("moviebox", "123", 1, 1, &win_path);
         assert!(!opts.contains(r"\"));
-        assert!(opts.contains("moviebox-state_file=C:/Users/User/AppData/Local/NEXFLEX/playback/moviebox_123_1_1.json"));
+        assert!(opts.contains(
+            "moviebox-state_file=C:/Users/User/AppData/Local/NEXFLEX/playback/moviebox_123_1_1.json"
+        ));
     }
 
     #[test]
@@ -1588,7 +1589,9 @@ mod tests {
         let unix_path =
             PathBuf::from("/home/user/.local/share/nexflex/playback/moviebox_123_1_1.json");
         let opts = format_mpv_script_opts("moviebox", "123", 1, 1, &unix_path);
-        assert!(opts.contains("moviebox-state_file=/home/user/.local/share/nexflex/playback/moviebox_123_1_1.json"));
+        assert!(opts.contains(
+            "moviebox-state_file=/home/user/.local/share/nexflex/playback/moviebox_123_1_1.json"
+        ));
     }
 
     #[test]
@@ -1646,9 +1649,11 @@ mod tests {
                 .get_args()
                 .map(|arg| arg.to_string_lossy().into_owned())
                 .collect::<Vec<_>>();
-            assert!(args.contains(
-                &r"--sub-file=C:\Users\User\AppData\Local\NEXFLEX\subs\sub.srt".into()
-            ));
+            assert!(
+                args.contains(
+                    &r"--sub-file=C:\Users\User\AppData\Local\NEXFLEX\subs\sub.srt".into()
+                )
+            );
         }
     }
     #[test]

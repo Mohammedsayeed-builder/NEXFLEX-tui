@@ -591,8 +591,18 @@ try {
     $download = {
         param($u, $z, $c)
         $ProgressPreference = "SilentlyContinue"
-        Invoke-WebRequest -Uri $u -OutFile $z -UseBasicParsing
-        Invoke-WebRequest -Uri $c -OutFile "$z.SHA256SUMS" -UseBasicParsing
+        # Windows PowerShell 5.1 cannot fetch file:// URIs with Invoke-WebRequest,
+        # so local mirrors (used by CI and by NEXFLEX_RELEASE_URL) are copied.
+        function Get-Artifact {
+            param([string]$From, [string]$To)
+            if ($From -match '^file:') {
+                Copy-Item -LiteralPath ([uri]$From).LocalPath -Destination $To -Force
+            } else {
+                Invoke-WebRequest -Uri $From -OutFile $To -UseBasicParsing
+            }
+        }
+        Get-Artifact -From $u -To $z
+        Get-Artifact -From $c -To "$z.SHA256SUMS"
     }
     try {
         Invoke-SpinnerJob -Label "Downloading $ArchiveName" -Action $download -Arguments @($Url, $ZipFile, "$BaseUrl/SHA256SUMS") | Out-Null
@@ -721,31 +731,43 @@ $Cols = Get-TerminalCols
 $Inner = 46
 $Pad = [Math]::Max(0, [int][Math]::Floor(($Cols - $Inner - 2) / 2))
 $Lead = " " * $Pad
-$Rule = "-" * $Inner
+$Edge = [char]0x2551
+$Rule = ([string][char]0x2550) * $Inner
+$Divider = ([string][char]0x2500) * $Inner
+
+$Rows = @("NOW SHOWING", "$AppName $TargetVersion", $ExePath)
+if ($PlayerDetected) { $Rows += "Player: $PlayerDetected" }
+$Rows += ""
+$Rows += "Run: nexflex"
+$Rows += "by $Creator"
 
 Write-Host ""
 if ($script:Unicode) {
-    Write-Host "$Lead$($C.Mauve)$([char]0x2554)$([char]0x2550)$Rule$([char]0x2557)$($C.Reset)"
-    Write-Host "$Lead$($C.Mauve)$([char]0x2551)$($C.Reset)  $($C.Bold)$($C.Yellow)NOW SHOWING$($C.Reset)"
-    Write-Host "$Lead$($C.Mauve)$([char]0x255F)$Rule$([char]0x2562)$($C.Reset)"
-    Write-Host "$Lead$($C.Mauve)$([char]0x2551)$($C.Reset)  $($C.Text)$AppName $TargetVersion$($C.Reset)"
-    Write-Host "$Lead$($C.Mauve)$([char]0x2551)$($C.Reset)  $($C.Subtext)$ExePath$($C.Reset)"
-    if ($PlayerDetected) {
-        Write-Host "$Lead$($C.Mauve)$([char]0x2551)$($C.Reset)  $($C.Subtext)Player: $PlayerDetected$($C.Reset)"
+    Write-Host "$Lead$($C.Mauve)$([char]0x2554)$Rule$([char]0x2557)$($C.Reset)"
+    $first = $true
+    foreach ($Row in $Rows) {
+        if ($first) {
+            $Text = $Row.PadRight($Inner - 4)
+            Write-Host "$Lead$($C.Mauve)$Edge$($C.Reset)  $($C.Bold)$($C.Yellow)$Text$($C.Reset)  $($C.Mauve)$Edge$($C.Reset)"
+            Write-Host "$Lead$($C.Mauve)$([char]0x255F)$Divider$([char]0x2562)$($C.Reset)"
+            $first = $false
+            continue
+        }
+        if ($Row -eq "Run: nexflex") {
+            $Text = $Row.PadRight($Inner - 4)
+            Write-Host "$Lead$($C.Mauve)$Edge$($C.Reset)  $($C.Green)$Text$($C.Reset)  $($C.Mauve)$Edge$($C.Reset)"
+            Write-Host "$Lead$($C.Mauve)$([char]0x255F)$Divider$([char]0x2562)$($C.Reset)"
+            continue
+        }
+        $Text = if ($Row.Length -gt $Inner - 4) { "..." + $Row.Substring($Row.Length - ($Inner - 7)) } else { $Row }
+        $Text = $Text.PadRight($Inner - 4)
+        Write-Host "$Lead$($C.Mauve)$Edge$($C.Reset)  $($C.Subtext)$Text$($C.Reset)  $($C.Mauve)$Edge$($C.Reset)"
     }
-    Write-Host "$Lead$($C.Mauve)$([char]0x255F)$Rule$([char]0x2562)$($C.Reset)"
-    Write-Host "$Lead$($C.Mauve)$([char]0x2551)$($C.Reset)  $($C.Green)Run: nexflex$($C.Reset)"
-    Write-Host "$Lead$($C.Mauve)$([char]0x2551)$($C.Reset)  $($C.Subtext)by $Creator$($C.Reset)"
-    Write-Host "$Lead$($C.Mauve)$([char]0x255A)$([char]0x2550)$Rule$([char]0x255D)$($C.Reset)"
+    Write-Host "$Lead$($C.Mauve)$([char]0x255A)$Rule$([char]0x255D)$($C.Reset)"
 } else {
-    Write-Host "$Lead+$Rule+"
-    Write-Host "$Lead|  NOW SHOWING"
-    Write-Host "$Lead|  $AppName $TargetVersion"
-    Write-Host "$Lead|  $ExePath"
-    if ($PlayerDetected) { Write-Host "$Lead|  Player: $PlayerDetected" }
-    Write-Host "$Lead|  Run: nexflex"
-    Write-Host "$Lead|  by $Creator"
-    Write-Host "$Lead+$Rule+"
+    Write-Host "$Lead+$("-" * $Inner)+"
+    foreach ($Row in $Rows) { Write-Host ("$Lead|  " + $Row.PadRight($Inner - 2) + "|") }
+    Write-Host "$Lead+$("-" * $Inner)+"
 }
 Write-Host ""
 

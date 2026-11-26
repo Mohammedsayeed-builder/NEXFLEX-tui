@@ -257,10 +257,7 @@ async fn test_settings_hub_clear_cache_activation_and_notification() {
 
     app.handle_action(Action::ClearCache).await;
     assert!(!app.state().show_settings_popup);
-    assert_eq!(
-        app.state().active_screen,
-        nexflex::tui::state::Screen::Home
-    );
+    assert_eq!(app.state().active_screen, nexflex::tui::state::Screen::Home);
 
     app.handle_action(Action::CacheCleared(Ok(()))).await;
     let notification = app.state().notifications.back();

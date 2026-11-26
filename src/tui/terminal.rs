@@ -42,8 +42,7 @@ fn outer_terminal_supports_graphics() -> bool {
 }
 
 pub fn should_query_images() -> bool {
-    if std::env::var("NEXFLEX_NO_IMAGE").is_ok_and(|v| v == "1" || v.eq_ignore_ascii_case("true"))
-    {
+    if std::env::var("NEXFLEX_NO_IMAGE").is_ok_and(|v| v == "1" || v.eq_ignore_ascii_case("true")) {
         return false;
     }
     if let Ok(forced) = std::env::var("NEXFLEX_IMAGE_PROTOCOL") {

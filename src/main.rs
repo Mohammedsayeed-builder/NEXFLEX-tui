@@ -100,9 +100,7 @@ async fn main() -> std::io::Result<()> {
         println!("    NEXFLEX_IINA_PATH      Custom iina-cli binary path");
         println!("    NEXFLEX_FOURKHDHUB_URL Custom 4KHDHub base URL");
         println!("    NEXFLEX_NO_IMAGE       Disable poster image queries (1/true)");
-        println!(
-            "    NEXFLEX_IMAGE_PROTOCOL Force graphics protocol (kitty, sixel, iterm2, none)"
-        );
+        println!("    NEXFLEX_IMAGE_PROTOCOL Force graphics protocol (kitty, sixel, iterm2, none)");
         println!("    NEXFLEX_CELL_SIZE      Override terminal cell size as WxH (e.g. 10x20)");
         return Ok(());
     }

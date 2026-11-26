@@ -28,9 +28,7 @@ impl InstallationEnvironment {
             Self::Homebrew => {
                 Some("This installation is managed by Homebrew. Run: brew upgrade nexflex")
             }
-            Self::Scoop => {
-                Some("This installation is managed by Scoop. Run: scoop update nexflex")
-            }
+            Self::Scoop => Some("This installation is managed by Scoop. Run: scoop update nexflex"),
             Self::Termux => Some(
                 "Android / Termux update: run 'curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash'",
             ),
@@ -367,11 +365,7 @@ mod tests {
         let exe = Path::new("C:/App/nexflex.exe");
         let paths = stale_update_artifacts(exe);
         assert_eq!(paths.len(), 2);
-        assert!(
-            paths[0]
-                .to_string_lossy()
-                .contains("nexflex_update_staged")
-        );
+        assert!(paths[0].to_string_lossy().contains("nexflex_update_staged"));
         assert!(
             paths[1]
                 .to_string_lossy()
@@ -381,8 +375,7 @@ mod tests {
 
     #[test]
     fn detects_scoop_managed_environment() {
-        let win_path =
-            Path::new("C:\\Users\\user\\scoop\\apps\\nexflex\\0.1.23\\nexflex.exe");
+        let win_path = Path::new("C:\\Users\\user\\scoop\\apps\\nexflex\\0.1.23\\nexflex.exe");
         assert!(is_scoop_managed(win_path));
         assert_eq!(detect_environment(win_path), InstallationEnvironment::Scoop);
 

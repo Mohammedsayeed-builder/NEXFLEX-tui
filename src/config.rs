@@ -101,8 +101,7 @@ static TEST_SANDBOX_DIR: std::sync::LazyLock<Option<PathBuf>> = std::sync::LazyL
             .and_then(|p| p.parent().and_then(|d| d.file_name()).map(|n| n == "deps"))
             .unwrap_or(false);
     if is_test_binary {
-        let dir =
-            std::env::temp_dir().join(format!("nexflex_test_sandbox_{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("nexflex_test_sandbox_{}", std::process::id()));
         let _ = std::fs::create_dir_all(&dir);
         Some(dir)
     } else {

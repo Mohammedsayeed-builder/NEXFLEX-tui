@@ -72,8 +72,7 @@ async fn test_live_series_resolutions_and_streams() {
         .search("Breaking Bad", 1)
         .await
         .expect("search series");
-    let catalog =
-        nexflex::providers::moviebox::adapt::moviebox_search_json_to_catalog(&search_res);
+    let catalog = nexflex::providers::moviebox::adapt::moviebox_search_json_to_catalog(&search_res);
     assert!(!catalog.is_empty(), "search should return catalog items");
 
     let series = catalog
@@ -327,8 +326,7 @@ async fn test_live_moviebox_dynamic_movie_mpv_playback() {
     client.init().await.expect("client init successful");
 
     let search_res = client.search("Avengers", 1).await.expect("search Avengers");
-    let catalog =
-        nexflex::providers::moviebox::adapt::moviebox_search_json_to_catalog(&search_res);
+    let catalog = nexflex::providers::moviebox::adapt::moviebox_search_json_to_catalog(&search_res);
     assert!(!catalog.is_empty(), "search should return results");
 
     let movie = catalog

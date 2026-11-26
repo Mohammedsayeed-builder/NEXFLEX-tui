@@ -733,8 +733,7 @@ async fn test_contextual_window_title() {
     app.state_mut().active_provider = nexflex::providers::models::ProviderKind::MovieBox;
     assert_eq!(app.contextual_title(), "NEXFLEX — Streaming");
 
-    app.state_mut()
-        .set_mode(nexflex::tui::state::AppMode::Tv);
+    app.state_mut().set_mode(nexflex::tui::state::AppMode::Tv);
     assert_eq!(app.contextual_title(), "NEXFLEX — Live TV");
 
     app.state_mut()
@@ -1021,8 +1020,7 @@ async fn test_ctrl_p_scoped_strictly_to_streaming_mode() {
     app.handle_action(Action::Key(ctrl_p)).await;
     assert_ne!(app.state().active_provider, initial_provider);
 
-    app.state_mut()
-        .set_mode(nexflex::tui::state::AppMode::Tv);
+    app.state_mut().set_mode(nexflex::tui::state::AppMode::Tv);
     app.state_mut().is_tv_mode = true;
     app.state_mut().tv_enabled = true;
     app.state_mut().tv_config_popup = false;

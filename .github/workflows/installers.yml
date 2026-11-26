@@ -153,5 +153,14 @@ jobs:
           printf '{"name":"nexflex-tui-%s-%s","version":"0.0.0"}' "$os" "$cpu" > "node_modules/nexflex-tui-$os-$cpu/package.json"
           printf '#!/bin/sh\necho "nexflex 0.0.0"\n' > "node_modules/nexflex-tui-$os-$cpu/bin/$exe"
           chmod +x "node_modules/nexflex-tui-$os-$cpu/bin/$exe"
-          out=$(HOME="$PWD/fakehome" node npm/bin/nexflex.js --version)
-          echo "$out" | grep -q "nexflex 0.0.0"
+          if [ "$os" = "win32" ]; then
+            # a POSIX shim cannot be executed on Windows; check resolution only
+            node -e "
+              const p = require('./npm/lib/platform.js');
+              if (!p.resolveBinary()) { console.error('launcher did not resolve the platform binary'); process.exit(1); }
+              console.log('resolved:', p.resolveBinary());
+            "
+          else
+            out=$(HOME="$PWD/fakehome" node npm/bin/nexflex.js --version)
+            echo "$out" | grep -q "nexflex 0.0.0"
+          fi

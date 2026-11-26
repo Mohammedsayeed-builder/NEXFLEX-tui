@@ -596,7 +596,8 @@ impl App {
                             );
                         }
                         4 => {
-                            const REPO_URL: &str = "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui";
+                            const REPO_URL: &str =
+                                "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui";
                             match crate::net::open_external_url(REPO_URL) {
                                 Ok(()) => {
                                     self.state.notify(
@@ -781,9 +782,7 @@ impl App {
                             self.state.notify(
                                 NotificationKind::Info,
                                 "Update Available",
-                                format!(
-                                    "NEXFLEX v{version} is available. Exit search to view."
-                                ),
+                                format!("NEXFLEX v{version} is available. Exit search to view."),
                             );
                         } else if self.state.is_playing || self.state.download_progress.is_some() {
                             self.state.update_available = Some((version.clone(), notes));
