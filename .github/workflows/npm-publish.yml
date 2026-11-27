@@ -32,7 +32,7 @@ jobs:
             os: windows-latest
             asset: NEXFLEX_Windows_x64.zip
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
@@ -62,7 +62,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           Copy-Item "target\${{ matrix.target }}\release\nexflex.exe" "dist\"
           Compress-Archive -Path dist\* -DestinationPath ${{ matrix.asset }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: npm-${{ matrix.target }}
           path: ${{ matrix.asset }}
@@ -72,7 +72,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: x86_64-apple-darwin,aarch64-apple-darwin
@@ -84,7 +84,7 @@ jobs:
             target/x86_64-apple-darwin/release/nexflex \
             target/aarch64-apple-darwin/release/nexflex
           tar -czvf NEXFLEX_macOS_Universal.tar.gz -C dist .
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: npm-universal-apple-darwin
           path: NEXFLEX_macOS_Universal.tar.gz
@@ -94,12 +94,12 @@ jobs:
     needs: [artifacts, darwin]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: npm/artifacts
           merge-multiple: true
