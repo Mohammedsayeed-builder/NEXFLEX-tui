@@ -670,6 +670,17 @@ if (-not $NoModifyPath) {
     if (Add-ToUserPath -Directory $EffectiveInstallDir) {
         $PathModified = $true
     }
+    # Refresh this session from the registry so `nexflex` works immediately,
+    # without opening a new window.
+    try {
+        $MachinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
+        $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
+        $env:PATH = (@($MachinePath, $UserPath) | Where-Object { $_ }) -join ";"
+    } catch {
+        if (@($env:PATH -split ";") -notcontains $EffectiveInstallDir.TrimEnd("\")) {
+            $env:PATH = "$env:PATH;$EffectiveInstallDir"
+        }
+    }
     if (@($env:PATH -split ";") -notcontains $EffectiveInstallDir.TrimEnd("\")) {
         $env:PATH = "$env:PATH;$EffectiveInstallDir"
     }

@@ -523,8 +523,8 @@ do_uninstall() {
     STEP_CURRENT=1
     step_begin 1 "Locating $BIN_NAME"
     local targets=() p
-    for p in "$DEFAULT_INSTALL_DIR/$BIN_NAME" "$HOME/.local/bin/$BIN_NAME" \
-             "/usr/local/bin/$BIN_NAME" "/opt/homebrew/bin/$BIN_NAME"; do
+    for p in "${PREFIX:-/nonexistent}/bin/$BIN_NAME" "$DEFAULT_INSTALL_DIR/$BIN_NAME" \
+             "$HOME/.local/bin/$BIN_NAME" "/usr/local/bin/$BIN_NAME" "/opt/homebrew/bin/$BIN_NAME"; do
         [ -f "$p" ] && targets+=("$p")
     done
     local on_path
@@ -607,8 +607,23 @@ if [ "$UNINSTALL" -eq 1 ]; then
     exit 0
 fi
 
-INSTALL_DIR="${CUSTOM_DIR:-$DEFAULT_INSTALL_DIR}"
+# Where the binary goes. Termux keeps user binaries in $PREFIX/bin, which is
+# already on PATH in every session, so nothing has to be exported there.
+if [ -n "$CUSTOM_DIR" ]; then
+    INSTALL_DIR="$CUSTOM_DIR"
+elif [ "$IS_TERMUX" -eq 1 ] && [ -n "${PREFIX:-}" ] && [ -d "${PREFIX}/bin" ]; then
+    INSTALL_DIR="$PREFIX/bin"
+elif [ -w "$DEFAULT_INSTALL_DIR" ] || [ ! -e "$DEFAULT_INSTALL_DIR" ]; then
+    INSTALL_DIR="$DEFAULT_INSTALL_DIR"
+elif [ -w /usr/local/bin ]; then
+    INSTALL_DIR="/usr/local/bin"
+else
+    INSTALL_DIR="$DEFAULT_INSTALL_DIR"
+fi
 APP_PATH="$INSTALL_DIR/$BIN_NAME"
+
+WAS_ON_PATH=0
+case ":$PATH:" in *":$INSTALL_DIR:"*) WAS_ON_PATH=1 ;; esac
 
 TMP_VER_FILE=$(mktemp)
 TMP_DIR=""
@@ -747,6 +762,8 @@ if [ ! -w "$INSTALL_DIR" ]; then
     if [ "$INSTALL_DIR" != "$HOME/.local/bin" ] && [ -w "$HOME" ]; then
         INSTALL_DIR="$HOME/.local/bin"
         APP_PATH="$INSTALL_DIR/$BIN_NAME"
+        WAS_ON_PATH=0
+        case ":$PATH:" in *":$INSTALL_DIR:"*) WAS_ON_PATH=1 ;; esac
         mkdir -p "$INSTALL_DIR" 2>/dev/null || true
     fi
 fi
@@ -766,32 +783,68 @@ run_step "Installing to $INSTALL_DIR" install_binary || {
 step_ok "Installed $APP_PATH"
 
 # --- shell PATH ---
+# The installer runs in a subshell (usually `curl | bash`), so it can never
+# change the caller's PATH directly. Instead it puts the binary somewhere the
+# shell will find on its own: a symlink in a directory that is already on PATH,
+# or an idempotent line in every rc file the user actually has.
+PATH_READY=$WAS_ON_PATH
 SHELL_MODIFIED=""
-if [ "$NO_MODIFY_PATH" -eq 0 ]; then
-    if ! printf "%s" "$PATH" | tr ':' '\n' | grep -Fqx "$INSTALL_DIR"; then
-        CURRENT_SHELL=$(basename "${SHELL:-bash}")
-        RC_FILE=""
-        case "$CURRENT_SHELL" in
-            zsh) RC_FILE="$HOME/.zshrc" ;;
-            bash)
-                if [ -f "$HOME/.bashrc" ]; then RC_FILE="$HOME/.bashrc"
-                elif [ -f "$HOME/.bash_profile" ]; then RC_FILE="$HOME/.bash_profile"
-                else RC_FILE="$HOME/.bashrc"; fi ;;
-            fish) RC_FILE="$HOME/.config/fish/config.fish" ;;
-        esac
-        if [ -n "$RC_FILE" ]; then
-            mkdir -p "$(dirname "$RC_FILE")"
-            if ! grep -Fq -- "$INSTALL_DIR" "$RC_FILE" 2>/dev/null; then
-                if [ "$CURRENT_SHELL" = "fish" ]; then
-                    printf "\nfish_add_path %s\n" "$INSTALL_DIR" >> "$RC_FILE"
-                else
-                    printf "\nexport PATH=\"%s:\$PATH\"\n" "$INSTALL_DIR" >> "$RC_FILE"
-                fi
-                SHELL_MODIFIED="$RC_FILE"
-            fi
+SYMLINKED=""
+
+path_contains() {
+    case ":$PATH:" in *":$1:"*) return 0 ;; *) return 1 ;; esac
+}
+
+if [ "$NO_MODIFY_PATH" -eq 0 ] && [ "$PATH_READY" -eq 0 ]; then
+    # 1. symlink into a writable directory that is already on PATH
+    for dir in /usr/local/bin /opt/homebrew/bin "$HOME/.local/bin" "$HOME/bin"; do
+        [ "$dir" = "$INSTALL_DIR" ] && continue
+        path_contains "$dir" || continue
+        [ -d "$dir" ] && [ -w "$dir" ] || continue
+        if ln -sf "$APP_PATH" "$dir/$BIN_NAME" 2>/dev/null; then
+            SYMLINKED="$dir/$BIN_NAME"
+            PATH_READY=1
+            break
+        fi
+    done
+fi
+
+if [ "$NO_MODIFY_PATH" -eq 0 ] && [ "$PATH_READY" -eq 0 ]; then
+    # 2. append to every rc file that exists; create ~/.bashrc if there is none
+    CURRENT_SHELL=$(basename "${SHELL:-bash}")
+    RC_FILES=()
+    for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile" "$HOME/.bash_profile"; do
+        [ -f "$rc" ] && RC_FILES+=("$rc")
+    done
+    if [ "${#RC_FILES[@]}" -eq 0 ]; then
+        : > "$HOME/.bashrc" 2>/dev/null && RC_FILES+=("$HOME/.bashrc")
+    fi
+    for rc in "${RC_FILES[@]}"; do
+        [ -w "$rc" ] || continue
+        if grep -Fq -- "$INSTALL_DIR" "$rc" 2>/dev/null; then
+            continue
+        fi
+        if [ "$CURRENT_SHELL" = "fish" ]; then
+            printf '\nfish_add_path %s\n' "$INSTALL_DIR" >> "$rc"
+        else
+            printf '\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "$rc"
+        fi
+        SHELL_MODIFIED="${SHELL_MODIFIED:+$SHELL_MODIFIED }$rc"
+    done
+
+    # fish keeps its own config
+    if [ "$CURRENT_SHELL" = "fish" ] && [ -d "$HOME/.config/fish" ]; then
+        FISH_RC="$HOME/.config/fish/config.fish"
+        if ! grep -Fq -- "$INSTALL_DIR" "$FISH_RC" 2>/dev/null; then
+            printf '\nfish_add_path %s\n' "$INSTALL_DIR" >> "$FISH_RC"
+            SHELL_MODIFIED="${SHELL_MODIFIED:+$SHELL_MODIFIED }$FISH_RC"
         fi
     fi
 fi
+
+# Make the rest of this script (and its own verification) see the binary.
+export PATH="$INSTALL_DIR:$PATH"
+hash -r 2>/dev/null || true
 
 # --- player check ---
 STEP_CURRENT=5
@@ -905,10 +958,26 @@ finale() {
     printf "\n"
 }
 
+# --- verification: the binary must run, and the shell must be able to find it ---
 STEP_CURRENT=$((STEP_TOTAL + 1))
+if ! "$APP_PATH" --version >/dev/null 2>&1; then
+    printf "\n  %b%s%b %bThe installed binary does not run.%b\n" "$C_RED" "$FAIL_MARK" "$C_RESET" "$C_TEXT" "$C_RESET" >&2
+    printf "  Try: %bcargo install --git https://github.com/Mohammedsayeed-builder/NEXFLEX-tui nexflex --locked%b\n\n" "$C_BOLD" "$C_RESET" >&2
+    exit 1
+fi
+if [ "$NO_MODIFY_PATH" -eq 0 ] && ! command -v "$BIN_NAME" >/dev/null 2>&1; then
+    PATH_READY=0
+fi
+
 finale
 
-if [ -n "$SHELL_MODIFIED" ]; then
-    printf "  %b%s%b Run %bsource %s%b or open a new terminal to refresh PATH.\n\n" \
-        "$C_SAPPHIRE" "$INFO_MARK" "$C_RESET" "$C_BOLD" "$SHELL_MODIFIED" "$C_RESET"
+if [ "$PATH_READY" -eq 0 ]; then
+    if [ -n "$SHELL_MODIFIED" ]; then
+        printf "  %b%s%b Run %bexec \"$SHELL\" -l%b to load the new PATH in this shell.\n\n" \
+            "$C_SAPPHIRE" "$INFO_MARK" "$C_RESET" "$C_BOLD" "$C_RESET"
+    else
+        printf "  %b%s%b Add it to PATH for this session with:\n" \
+            "$C_SAPPHIRE" "$INFO_MARK" "$C_RESET"
+        printf "    %bexport PATH=\"%s:$PATH\"%b\n\n" "$C_BOLD" "$INSTALL_DIR" "$C_RESET"
+    fi
 fi

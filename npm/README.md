@@ -4,7 +4,7 @@ Install the NEXFLEX terminal app with npm:
 
 ```bash
 npm install -g nexflex-tui
-npx nexflex-tui
+exec "$SHELL" -l     # reload PATH, then: nexflex
 ```
 
 The package is a tiny launcher. The binary itself ships in a per-platform

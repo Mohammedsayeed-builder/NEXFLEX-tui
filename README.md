@@ -51,8 +51,12 @@ brew install nexflex-tui
 
 Direct install via Terminal (macOS & Linux, no package manager needed):
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash && exec "$SHELL" -l
 ```
+
+`exec "$SHELL" -l` reloads your shell afterwards so `nexflex` is on PATH straight away. On
+Termux the binary is installed to `$PREFIX/bin`, which is already on PATH, so the reload is
+harmless but not required.
 
 The installer shows an animated banner and a film-strip progress bar, verifies the
 SHA256 checksum before writing anything, offers to install mpv with your consent, and
@@ -64,7 +68,7 @@ ends on a "NOW SHOWING" screen. It falls back to plain output when piped, in CI,
 
 ```bash
 npm install -g nexflex-tui
-npx nexflex-tui
+exec "$SHELL" -l     # reload PATH, then: nexflex
 ```
 
 The npm package is a small launcher that pulls the matching prebuilt binary
@@ -85,7 +89,14 @@ irm https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/in
 
 > **SmartScreen prompt:** If Windows displays *"Windows protected your PC"*, click **More info** → **Run anyway**.
 
+The installer adds its directory to your user PATH and refreshes `$env:Path` in the current
+session, so `nexflex` works as soon as it finishes — no new window needed.
+
 ### Android (Termux)
+
+On Termux the binary is installed straight into `$PREFIX/bin`, which is already on `PATH`,
+so `nexflex` runs immediately after the installer finishes.
+
 ```bash
 pkg update && pkg install -y curl tar termux-tools termux-am
 curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash

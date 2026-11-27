@@ -23,7 +23,7 @@ brew install nexflex-tui
 No package manager required. Open Terminal and run:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash && exec "$SHELL" -l
 ```
 
 ---
@@ -56,7 +56,7 @@ Open Termux and run:
 
 ```bash
 pkg update && pkg install -y curl tar termux-tools termux-am
-curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Mohammedsayeed-builder/NEXFLEX-tui/main/install.sh | bash && exec "$SHELL" -l
 termux-setup-storage
 ```
 
