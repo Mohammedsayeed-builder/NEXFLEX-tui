@@ -18,6 +18,7 @@ const MAP = {
     "darwin-x64": ["NEXFLEX_macOS_Universal.tar.gz", "nexflex"],
     "darwin-arm64": ["NEXFLEX_macOS_Universal.tar.gz", "nexflex"],
     "win32-x64": ["NEXFLEX_Windows_x64.zip", "nexflex.exe"],
+    "android-arm64": ["NEXFLEX_Android_arm64.tar.gz", "nexflex"],
 };
 
 function unpack(archive, exe) {

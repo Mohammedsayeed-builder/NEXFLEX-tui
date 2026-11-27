@@ -124,7 +124,7 @@ function finale({ version, path, creator = "Mohammed Sayeed" }) {
 }
 
 function missingPlatform(label, version) {
-    const supported = "linux-x64, linux-arm64, darwin-x64, darwin-arm64, win32-x64";
+    const supported = "linux-x64, linux-arm64, darwin-x64, darwin-arm64, win32-x64, android-arm64";
     console.error(`${C.red}✖${C.reset} No prebuilt NEXFLEX ${version} binary for ${label}.`);
     console.error(`  Supported platforms: ${supported}`);
     console.error("");

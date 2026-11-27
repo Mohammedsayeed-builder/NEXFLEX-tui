@@ -8,6 +8,9 @@ const SUPPORTED = {
     "darwin-x64": "nexflex",
     "darwin-arm64": "nexflex",
     "win32-x64": "nexflex.exe",
+    // Termux / Android
+    "android-arm64": "nexflex",
+    "android-x64": "nexflex",
 };
 
 function packageName() {

@@ -19,6 +19,8 @@ const ASSETS = {
     "darwin-x64": { archive: "NEXFLEX_macOS_Universal.tar.gz", exe: "nexflex" },
     "darwin-arm64": { archive: "NEXFLEX_macOS_Universal.tar.gz", exe: "nexflex" },
     "win32-x64": { archive: "NEXFLEX_Windows_x64.zip", exe: "nexflex.exe" },
+    "android-arm64": { archive: "NEXFLEX_Android_arm64.tar.gz", exe: "nexflex" },
+    "android-x64": { archive: "NEXFLEX_Android_x64.tar.gz", exe: "nexflex" },
 };
 
 function cacheRoot() {
@@ -38,6 +40,40 @@ function baseUrl(version) {
     const override = process.env.NEXFLEX_RELEASE_URL;
     if (override) return `${override.replace(/\/+$/, "")}/`;
     return `https://github.com/${REPO}/releases/download/v${version}/`;
+}
+
+// The npm package and the release are versioned separately (the launcher is
+// republished without rebuilding binaries), so ask GitHub which release is
+// current and fall back to the package version.
+function latestReleaseTag() {
+    return new Promise((resolve) => {
+        const req = https.get(
+            `https://api.github.com/repos/${REPO}/releases/latest`,
+            { headers: { "User-Agent": "nexflex-npm", Accept: "application/vnd.github+json" } },
+            (res) => {
+                if (res.statusCode !== 200) {
+                    res.resume();
+                    resolve(null);
+                    return;
+                }
+                let body = "";
+                res.on("data", (c) => (body += c));
+                res.on("end", () => {
+                    try {
+                        const tag = JSON.parse(body).tag_name;
+                        resolve(tag ? String(tag).replace(/^v/, "") : null);
+                    } catch {
+                        resolve(null);
+                    }
+                });
+            },
+        );
+        req.on("error", () => resolve(null));
+        req.setTimeout(10000, () => {
+            req.destroy();
+            resolve(null);
+        });
+    });
 }
 
 function fetchTo(url, dest) {
@@ -92,8 +128,13 @@ async function ensureBinary(platformLabel, version, log) {
     const work = fs.mkdtempSync(path.join(os.tmpdir(), "nexflex-npm-"));
     const archive = path.join(work, asset.archive);
     try {
-        if (log) log(`Downloading NEXFLEX ${version} for ${platformLabel}...`);
-        await fetchTo(baseUrl(version) + asset.archive, archive);
+        let releaseVersion = version;
+        if (!process.env.NEXFLEX_RELEASE_URL) {
+            const tag = await latestReleaseTag();
+            if (tag) releaseVersion = tag;
+        }
+        if (log) log(`Downloading NEXFLEX ${releaseVersion} for ${platformLabel}...`);
+        await fetchTo(baseUrl(releaseVersion) + asset.archive, archive);
         extract(archive, work);
         const found = path.join(work, asset.exe);
         if (!fs.existsSync(found)) throw new Error(`${asset.exe} is missing from ${asset.archive}`);

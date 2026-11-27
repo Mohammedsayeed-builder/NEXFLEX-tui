@@ -12,7 +12,7 @@ package (`nexflex-tui-linux-x64`, `nexflex-tui-linux-arm64`, `nexflex-tui-darwin
 `nexflex-tui-darwin-arm64`, `nexflex-tui-win32-x64`) pulled in as an optional
 dependency — the same approach esbuild uses.
 
-Supported: linux x64/arm64, macOS x64/arm64, Windows x64.
+Supported: linux x64/arm64, macOS x64/arm64, Windows x64, Android/Termux arm64.
 
 On the first launch the installer screen is shown once (npm hides postinstall
 output, so it lives there); `npm_config_foreground_scripts=true` shows it again,
@@ -26,7 +26,8 @@ Created by Mohammed Sayeed.
 # 1. download the release assets for the version you are publishing
 mkdir -p artifacts && cd artifacts
 for a in NEXFLEX_Linux_x64.tar.gz NEXFLEX_Linux_arm64.tar.gz \
-         NEXFLEX_macOS_Universal.tar.gz NEXFLEX_Windows_x64.zip; do
+         NEXFLEX_macOS_Universal.tar.gz NEXFLEX_Windows_x64.zip \
+         NEXFLEX_Android_arm64.tar.gz; do
   curl -fsSLO "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.30/$a"
 done
 cd ..

@@ -5,7 +5,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const npmRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
-const platforms = ["linux-x64", "linux-arm64", "darwin-x64", "darwin-arm64", "win32-x64"];
+const platforms = ["linux-x64", "linux-arm64", "darwin-x64", "darwin-arm64", "win32-x64", "android-arm64"];
 const present = platforms.filter((p) =>
     existsSync(join(npmRoot, "platforms", p, "bin", p === "win32-x64" ? "nexflex.exe" : "nexflex")),
 );

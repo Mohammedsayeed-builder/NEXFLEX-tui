@@ -111,6 +111,12 @@ jobs:
           else
             echo "value=$(grep '^version =' Cargo.toml | head -1 | awk -F'"' '{print $2}')" >> "$GITHUB_OUTPUT"
           fi
+      - name: Fetch the Android/Termux asset from the release
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.value }}"
+          curl -fsSL -o npm/artifacts/NEXFLEX_Android_arm64.tar.gz \
+            "https://github.com/${{ github.repository }}/releases/download/v$VERSION/NEXFLEX_Android_arm64.tar.gz"
       - name: Prepare platform packages
         run: node npm/scripts/prepare-platforms.mjs npm/artifacts "${{ steps.version.outputs.value }}"
       - name: Publish platform packages
