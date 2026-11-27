@@ -570,7 +570,8 @@ do_uninstall() {
     STEP_CURRENT=5
     step_begin 5 "Finalising"
     step_ok "$APP_NAME uninstalled"
-    printf "\n  %b%s was removed.%b Restart your terminal to refresh PATH.\n\n" "$C_TEXT" "$APP_NAME" "$C_RESET"
+    printf "\n  %b%s was removed.%b Run %bexec \"$SHELL\" -l%b to refresh PATH in this shell.\n\n" \
+        "$C_TEXT" "$APP_NAME" "$C_RESET" "$C_BOLD" "$C_RESET"
 }
 
 remove_binaries() {
@@ -831,6 +832,17 @@ if [ "$NO_MODIFY_PATH" -eq 0 ] && [ "$PATH_READY" -eq 0 ]; then
         fi
         SHELL_MODIFIED="${SHELL_MODIFIED:+$SHELL_MODIFIED }$rc"
     done
+
+    # A login shell (`exec "$SHELL" -l`) reads ~/.profile or ~/.bash_profile,
+    # never ~/.bashrc, so make sure one of those carries the line as well.
+    if ! grep -Fq -- "$INSTALL_DIR" "$HOME/.profile" 2>/dev/null \
+       && ! grep -Fq -- "$INSTALL_DIR" "$HOME/.bash_profile" 2>/dev/null; then
+        LOGIN_RC="$HOME/.profile"
+        [ -f "$HOME/.bash_profile" ] && LOGIN_RC="$HOME/.bash_profile"
+        if printf '\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "$LOGIN_RC" 2>/dev/null; then
+            SHELL_MODIFIED="${SHELL_MODIFIED:+$SHELL_MODIFIED }$LOGIN_RC"
+        fi
+    fi
 
     # fish keeps its own config
     if [ "$CURRENT_SHELL" = "fish" ] && [ -d "$HOME/.config/fish" ]; then

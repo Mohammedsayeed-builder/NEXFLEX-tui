@@ -19,3 +19,25 @@ output, so it lives there); `npm_config_foreground_scripts=true` shows it again,
 `--no-animation` or `NO_COLOR=1` turns it off.
 
 Created by Mohammed Sayeed.
+
+## Publishing (maintainer)
+
+```bash
+# 1. download the release assets for the version you are publishing
+mkdir -p artifacts && cd artifacts
+for a in NEXFLEX_Linux_x64.tar.gz NEXFLEX_Linux_arm64.tar.gz \
+         NEXFLEX_macOS_Universal.tar.gz NEXFLEX_Windows_x64.zip; do
+  curl -fsSLO "https://github.com/Mohammedsayeed-builder/NEXFLEX-tui/releases/download/v0.1.30/$a"
+done
+cd ..
+
+# 2. drop the binaries into the platform packages and bump every version
+node npm/scripts/prepare-platforms.mjs ./artifacts 0.1.30
+
+# 3. publish the platform packages first, then the launcher
+for d in npm/platforms/*/; do (cd "$d" && npm publish --access public); done
+(cd npm && npm publish --access public)
+```
+
+`npm login` first, and the account must own the `nexflex-tui` name. In CI the same steps run in
+`.github/workflows/npm-publish.yml` when `NPM_TOKEN` is set.

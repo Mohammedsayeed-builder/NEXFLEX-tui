@@ -37,9 +37,10 @@ Created by **Mohammed Sayeed**.
 
 ## Installation
 
-> **Before the first release:** the Homebrew tap, the Scoop bucket and the npm package are
-> published from this repository, so they only work once a GitHub release exists. Until then
-> use the direct installer (`install.sh` / `install.ps1`) or build from source.
+> **What works right now:** the direct installers (`install.sh`, `install.ps1`) and
+> `cargo install --git …` — they download the published release.
+> **Homebrew, Scoop, winget and npm need a one-time publish each** (a tap repo, a bucket,
+> a manifest PR, and `npm publish`); see *Publishing* below. Until then those commands 404.
 
 ### macOS & Linux
 
@@ -73,6 +74,19 @@ exec "$SHELL" -l     # reload PATH, then: nexflex
 
 The npm package is a small launcher that pulls the matching prebuilt binary
 (`nexflex-tui-linux-x64`, `-linux-arm64`, `-darwin-x64`, `-darwin-arm64`, `-win32-x64`).
+
+**Not on npm yet.** The tarballs are built and ready, but nothing is published to the registry,
+so `npm install -g nexflex-tui` currently returns 404. Publish once with:
+
+```bash
+# after downloading the vX.Y.Z release assets into ./artifacts
+node npm/scripts/prepare-platforms.mjs ./artifacts X.Y.Z
+for d in npm/platforms/*/; do (cd "$d" && npm publish --access public); done
+(cd npm && npm publish --access public)
+```
+
+Or set `NPM_TOKEN` as a repository secret and publish a GitHub release — the
+`npm publish` workflow does the same thing with `--provenance`.
 
 ### Windows
 
