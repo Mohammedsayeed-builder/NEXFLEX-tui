@@ -152,4 +152,12 @@ async function ensureBinary(platformLabel, version, log) {
     }
 }
 
-module.exports = { ensureBinary, assetFor, cacheRoot, REPO };
+// Path of an already-downloaded binary, without touching the network.
+function cachedBinary(platformLabel, version) {
+    const asset = assetFor(platformLabel);
+    if (!asset) return null;
+    const target = path.join(cacheRoot(), version, asset.exe);
+    return fs.existsSync(target) ? target : null;
+}
+
+module.exports = { ensureBinary, cachedBinary, assetFor, cacheRoot, REPO };

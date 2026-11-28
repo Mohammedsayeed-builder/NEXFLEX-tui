@@ -10,12 +10,14 @@ const fs = require("fs");
 const os = require("os");
 
 const { resolveBinary, platformLabel } = require("../lib/platform");
-const { ensureBinary } = require("../lib/download");
+const { ensureBinary, cachedBinary } = require("../lib/download");
 const ui = require("../lib/installer-ui");
 const pkg = require("../package.json");
 
 const args = process.argv.slice(2);
 const quiet = args.includes("--no-animation") || process.env.NEXFLEX_NO_ANIMATION === "1";
+const wantsVersion = args.some((a) => a === "--version" || a === "-V" || a === "-v");
+const wantsHelp = args.some((a) => a === "--help" || a === "-h");
 
 function firstRun() {
     const marker = path.join(os.homedir(), ".nexflex", "npm-welcome");
@@ -52,11 +54,48 @@ function run(binary) {
     });
 }
 
+function printHelp() {
+    console.log(`nexflex-tui ${pkg.version} - launcher for the NEXFLEX terminal app
+
+Usage: nexflex [options]        (everything else is passed to NEXFLEX)
+
+  -V, --version    print the launcher version; also the app version when the
+                   binary has already been downloaded (never downloads)
+  -h, --help       show this help
+  --no-animation   skip the first-run screen
+
+The binary is fetched once from the GitHub release, then cached.`);
+}
+
+// --version must never touch the network: report what is installed and stop.
+function printVersion() {
+    const cached = resolveBinary() || cachedBinary(platformLabel(), pkg.version);
+    if (cached) {
+        run(cached);
+        return;
+    }
+    console.log(`nexflex-tui ${pkg.version} (launcher, ${platformLabel()})`);
+    console.log('The app binary is not downloaded yet - run "nexflex" once to fetch it.');
+}
+
 (async () => {
-    let binary = resolveBinary();
+    if (wantsHelp) {
+        printHelp();
+        return;
+    }
+    if (wantsVersion) {
+        printVersion();
+        return;
+    }
+
+    let binary = resolveBinary() || cachedBinary(platformLabel(), pkg.version);
 
     if (!binary) {
-        binary = await ensureBinary(platformLabel(), pkg.version, quiet ? null : (m) => console.error(`  ${m}`));
+        // Failures are always reported, even in quiet mode.
+        const log = (message) => {
+            if (!quiet || /fail/i.test(message)) console.error(`  ${message}`);
+        };
+        binary = await ensureBinary(platformLabel(), pkg.version, log);
     }
 
     if (!binary) {
